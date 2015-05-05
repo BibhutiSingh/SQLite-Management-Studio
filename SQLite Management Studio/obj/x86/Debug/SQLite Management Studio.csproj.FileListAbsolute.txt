@@ -1,0 +1,44 @@
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\SQLite Management Studio.exe
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\SQLite Management Studio.pdb
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.dll
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.Linq.dll
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.xml
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frmMain.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.Properties.Resources.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.exe
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.pdb
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frmNewTable.resources
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.exe
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.pdb
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\SQLite Management Studio.exe
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\SQLite Management Studio.pdb
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.dll
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.Linq.dll
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.xml
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.csprojResolveAssemblyReference.cache
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frmMain.resources
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frmNewTable.resources
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.Properties.Resources.resources
+E:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.csproj.GenerateResource.Cache
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frmMain.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frmNewTable.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frm_AddConnection.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frm_Export.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.Properties.Resources.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.SQLWorkbook.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.test.resources
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.csproj.GenerateResource.Cache
+D:\Development\SQLite Management Studio\SQLite Management Studio\bin\Debug\SQLite Management Studio.exe
+D:\Development\SQLite Management Studio\SQLite Management Studio\bin\Debug\SQLite Management Studio.pdb
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.exe
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.pdb
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.csprojResolveAssemblyReference.cache
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frm_AddConnection.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frm_Export.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.SQLWorkbook.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.test.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.csproj.GenerateResource.Cache
+D:\Development\SQLite Management Studio\SQLite Management Studio\bin\Debug\System.Data.SQLite.xml
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite Management Studio.csprojResolveAssemblyReference.cache
+D:\Development\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frm_Insert.resources
+D:\BIBHUTI\VISUAL.NET\01_Projects\SQLite Management Studio\SQLite Management Studio\obj\x86\Debug\SQLite_Management_Studio.frm_Insert.resources

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<connections>
+  <conn_details>
+    <name>FarmSoft</name>
+    <path>D:\BIBHUTI\VISUAL.NET\05_WPF Application\FarmSoft\FarmSoft\bin\Debug\dbo_farmsoft.sqlite</path>
+  </conn_details>
+  <conn_details>
+    <name>FarmSoft_Office</name>
+    <path>D:\Development\FarmSoft_Src\FarmSoft\bin\Debug\dbo_farmsoft.sqlite</path>
+  </conn_details>
+  <conn_details>
+    <name>Test</name>
+    <path>D:\Test.db</path>
+  </conn_details>
+  <conn_details>
+    <name>ProBilling_Home</name>  <path>D:\BIBHUTI\VISUAL.NET\05_WPF Application\ProBilling\ProBilling\ProBilling\bin\Debug\ProBilling.sqlite</path></conn_details>
+</connections>

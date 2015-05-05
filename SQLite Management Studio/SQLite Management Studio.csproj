@@ -1,0 +1,171 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{EB6DE4A4-B4F9-4510-B746-49B0E340648B}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>SQLite_Management_Studio</RootNamespace>
+    <AssemblyName>SQLite Management Studio</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>SQLite_Management_Studio.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>dbs_sqlite.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.SQLite">
+      <HintPath>..\..\Library\SQLite\net40\System.Data.SQLite.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Data.SQLite.Linq">
+      <HintPath>..\..\Library\SQLite\net40\System.Data.SQLite.Linq.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="cls_connection.cs" />
+    <Compile Include="frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frmNewTable.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frmNewTable.Designer.cs">
+      <DependentUpon>frmNewTable.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frm_AddConnection.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_AddConnection.Designer.cs">
+      <DependentUpon>frm_AddConnection.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Export.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Export.Designer.cs">
+      <DependentUpon>frm_Export.cs</DependentUpon>
+    </Compile>
+    <Compile Include="frm_Insert.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="frm_Insert.Designer.cs">
+      <DependentUpon>frm_Insert.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SQLWorkbook.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="SQLWorkbook.Designer.cs">
+      <DependentUpon>SQLWorkbook.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SQLWorker.cs" />
+    <Compile Include="test.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="test.Designer.cs">
+      <DependentUpon>test.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frmNewTable.resx">
+      <DependentUpon>frmNewTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_AddConnection.resx">
+      <DependentUpon>frm_AddConnection.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Export.resx">
+      <DependentUpon>frm_Export.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="frm_Insert.resx">
+      <DependentUpon>frm_Insert.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="SQLWorkbook.resx">
+      <DependentUpon>SQLWorkbook.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="test.resx">
+      <DependentUpon>test.cs</DependentUpon>
+    </EmbeddedResource>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\Add Data.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="dbs_sqlite.ico" />
+    <None Include="Resources\Data_Refresh.png" />
+    <None Include="Resources\Data_Connect.png" />
+    <None Include="Resources\Data_Close.png" />
+    <None Include="Resources\tab.png" />
+    <None Include="Resources\tab_remove2.png" />
+    <None Include="Resources\tab_delete.png" />
+    <None Include="Resources\close tab.png" />
+    <None Include="Resources\tab_remove.png" />
+    <None Include="Resources\tab_new.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

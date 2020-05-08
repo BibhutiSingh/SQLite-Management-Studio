@@ -47,12 +47,10 @@ namespace SQLite_Management_Studio
 
         void Refresh_Connection()
         {
-            cmb_connections.DataSource = cls_connection.conn_list.ToList();
+            cmb_connections.DataSource = ConnectionManager.GetConnectionManager().conn_list.Values.ToList();
 
-            cmb_connections.DisplayMember = "Key";
-
-            if (cls_connection.conn_list.Count == 0)
-                cmb_connections.Text = "";
+            cmb_connections.DisplayMember = "Name";
+            cmb_connections.ValueMember = "ID";
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -68,7 +66,7 @@ namespace SQLite_Management_Studio
 
         private void btn_run_Click(object sender, EventArgs e)
         {
-            if (cmb_connections.Text == "" || cmb_connections.Text.Length == 0 || cls_connection.conn_list .Count ==0 )
+            if (cmb_connections.Text == "" || cmb_connections.Text.Length == 0 )
                 MessageBox.Show("No connection Selected. Please Refresh Connection list.");
 
                 
@@ -76,9 +74,9 @@ namespace SQLite_Management_Studio
             {
                 dg.DataSource = null;
                 if(txt.SelectionLength==0)
-                    tbl = sql.Execute_DataTable(txt.Text, cls_connection.conn_list[cmb_connections.Text]);
+                    tbl = sql.Execute_DataTable(txt.Text, Convert.ToInt32( cmb_connections.SelectedValue));
                 else
-                    tbl = sql.Execute_DataTable(txt.SelectedText, cls_connection.conn_list[cmb_connections.Text]);
+                    tbl = sql.Execute_DataTable(txt.SelectedText, Convert.ToInt32(cmb_connections.SelectedValue));
 
 
                 
@@ -94,12 +92,12 @@ namespace SQLite_Management_Studio
                     dr[1] = txt.SelectedText ;
 
                 
-                dr[2] = sql.opr_msg;
+                dr[2] = sql.WorkerResult.Message;
 
 
                 tbl_res.Rows.Add(dr);
 
-                if (sql.opr_msg == "SUCCESS")
+                if (sql.WorkerResult.Result)
                 {
                     txt_Status.Text = "SUCCESS";
                     txt_Status.ForeColor = Color.ForestGreen;

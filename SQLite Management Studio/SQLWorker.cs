@@ -9,134 +9,141 @@ namespace SQLite_Management_Studio
 {
     public class SQLWorker
     {
-    
-        #region Class Communication
-        
-       
-        public bool opr_flag=true  ;
-        public string opr_msg = "SUCCESS";
+        SQLiteCommand com = null;
+        SQLiteDataAdapter da = null;
+        SQLiteDataReader dr = null;
 
-        void opr_res(bool flg, string msg = "SUCCESS")
-        {
-            opr_flag = flg;
-            opr_msg = msg;
-        }
-
-        #endregion
-
-
-        SQLiteCommand com=null;
-        SQLiteDataAdapter da=null;
-        SQLiteDataReader dr=null;
-
-        DataSet ds=null;
+        DataSet ds = null;
         DataTable tbl = null;
-
-
-        public void Execute_Query(string com_str, SQLiteConnection conn)
+        public SqlWorkerQueryResult WorkerResult { get; set; }
+        private SQLiteConnection GetConnection(int Id)
         {
-            com = new SQLiteCommand(com_str, conn);
-
+            return ConnectionManager.GetConnectionManager().GetConnection(Id).GetActiveConnection();
+        }
+        public void Execute_Query(string com_str, int connId)
+        {
+            WorkerResult = new SqlWorkerQueryResult(com_str);
+            WorkerResult.Start();
             try
             {
-                com.ExecuteNonQuery();
-                opr_res(true);
+                com = GetConnection(connId).CreateCommand();
+                com.CommandText = com_str;
+                int cnt = com.ExecuteNonQuery();
+                WorkerResult.Success(cnt);
             }
             catch (Exception ex)
             {
-                opr_res(false, "Error in executing query:" + ex.Message + "\nSQL QUERY:" + com_str);
 
+                WorkerResult.Error(ex.Message);
             }
-
+            WorkerResult.End();
         }
-
-        public void Execute_Query(string com_str, SQLiteConnection conn,SQLiteParameter [] prm)
+        public void Execute_Query(string com_str, int connId, SQLiteParameter[] prm)
         {
-            com = new SQLiteCommand(com_str, conn);
-
-            for (int i = 0; i < prm.Length; i++)
-            {
-                com.Parameters.Add(prm[i]);
-            }
-
+            WorkerResult = new SqlWorkerQueryResult(com_str);
+            WorkerResult.Start();
             try
             {
-                com.ExecuteNonQuery();
-                opr_res(true);
+                com = GetConnection(connId).CreateCommand();
+                com.CommandText = com_str;
+                for (int i = 0; i < prm.Length; i++)
+                {
+                    com.Parameters.Add(prm[i]);
+                }
+                int cnt = com.ExecuteNonQuery();
+                WorkerResult.Success(cnt);
             }
             catch (Exception ex)
             {
-                opr_res(false, "Error in executing query:" + ex.Message + "\nSQL QUERY:" + com_str);
 
+                WorkerResult.Error(ex.Message);
             }
+            WorkerResult.End();
 
         }
-
-
-        public DataSet  Execute_DataSet(string com_str, SQLiteConnection conn)
+        public DataTable Execute_DataTable(string com_str, int connId)
         {
-            da = new  SQLiteDataAdapter (com_str, conn);
-            ds = new DataSet();
-
-
-
+            WorkerResult = new SqlWorkerQueryResult(com_str);
+            WorkerResult.Start();
             try
             {
-                da.Fill(ds);
-                opr_res(true);
-            }
-            catch (Exception ex)
-            {
-                opr_res(false, "Error in executing query:" + ex.Message + "\nSQL QUERY:" + com_str);
-
-            }
-
-            return ds;
-        }
-
-        public DataTable Execute_DataTable(string com_str, SQLiteConnection conn)
-        {
-            da = new SQLiteDataAdapter(com_str, conn);
-            tbl = new DataTable();
-
-            try
-            {
+                da = new SQLiteDataAdapter(com_str, GetConnection(connId));
+                tbl = new DataTable();
                 da.Fill(tbl);
-                opr_res(true);
+                int cnt = tbl != null ? tbl.Rows.Count : 0;
+                WorkerResult.Success(cnt);
             }
             catch (Exception ex)
-            { opr_res(false, "Error in executing query:" + ex.Message + "\nSQL QUERY:" + com_str); }
+            {
 
+                WorkerResult.Error(ex.Message);
+            }
+            WorkerResult.End();
             return tbl;
 
         }
-
-
-        public SQLiteDataReader Execute_DataReader(string com_str, SQLiteConnection conn)
+        public SQLiteDataReader Execute_DataReader(string com_str, int connId)
         {
-            //if (dr.IsClosed==false  )
-            //{ dr.Close(); }
-
-            com = new SQLiteCommand(com_str, conn);
-            
-
-
-
+            WorkerResult = new SqlWorkerQueryResult(com_str);
+            WorkerResult.Start();
             try
             {
+                com = GetConnection(connId).CreateCommand();
+                com.CommandText = com_str;
                 dr = com.ExecuteReader();
-                opr_res(true);
+                int cnt = 0;
+                WorkerResult.Success(cnt);
+
             }
             catch (Exception ex)
             {
-                opr_res(false, "Error in executing query:" + ex.Message + "\nSQL QUERY:" + com_str);
 
+                WorkerResult.Error(ex.Message);
             }
+            WorkerResult.End();
 
             return dr;
         }
-
-
-
     }
+
+    public class SqlWorkerQueryResult
+    {
+        public bool Result { get; set; }
+        public string Message { get; set; }
+        public TimeSpan TimeTaken { get; set; }
+        public int RowsAffected { get; set; }
+        public string Query { get; set; }
+        public SqlWorkerQueryResult()
+        {
+
+        }
+        public SqlWorkerQueryResult(string query)
+        {
+            Query = query;
+        }
+        public DateTime startTime;
+        public DateTime endTime;
+        public void Start()
+        {
+            this.startTime = DateTime.Now;
+        }
+        public void End()
+        {
+            this.endTime = DateTime.Now;
+            this.TimeTaken = this.endTime - this.startTime;
+        }
+        internal void Success(int affectedCount = 0)
+        {
+            Result = true;
+            Message = "Success";
+            RowsAffected = affectedCount;
+        }
+        internal void Error(string message)
+        {
+            Result = false;
+            Message = message;
+            RowsAffected = 0;
+        }
+    }
+
 }

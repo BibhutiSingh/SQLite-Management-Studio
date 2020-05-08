@@ -112,17 +112,17 @@ namespace SQLite_Management_Studio
 
             tmp_str1 = tmp_str2.Remove(tmp_str2.Length-1) + ")";
 
-            obj_sql.Execute_Query(tmp_str1, conn);
+            //obj_sql.Execute_Query(tmp_str1, conn);
 
-            if (obj_sql.opr_flag == true)
-            {
-                MessageBox.Show("Table Created!!!");
-                this.Close();
-            }
-            else
-            {
-                MessageBox.Show(obj_sql.opr_msg);
-            }
+            //if (obj_sql.opr_flag == true)
+            //{
+            //    MessageBox.Show("Table Created!!!");
+            //    this.Close();
+            //}
+            //else
+            //{
+            //    MessageBox.Show(obj_sql.opr_msg);
+            //}
         }
 
         private void dg_CellValueChanged(object sender, DataGridViewCellEventArgs e)

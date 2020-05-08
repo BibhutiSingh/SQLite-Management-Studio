@@ -14,7 +14,7 @@ namespace SQLite_Management_Studio
     public partial class frm_Insert : Form
     {
         string tbl_name = "";
-        string con_name = "";
+        int connId;
 
         Label[] lbl;
         TextBox[] txt;
@@ -26,12 +26,12 @@ namespace SQLite_Management_Studio
         
 
 
-        public frm_Insert(string tbl ,string conns  )
+        public frm_Insert(string tbl ,int conns  )
         {
             InitializeComponent();
 
             tbl_name = tbl;
-            con_name = conns;
+            connId = conns;
 
 
         }
@@ -44,9 +44,9 @@ namespace SQLite_Management_Studio
 
         private void Draw_Form()
         {
-        
 
-            da = new SQLiteDataAdapter("select * from " + tbl_name + " where 1=2", cls_connection.conn_list[con_name]);
+
+            da = null;//new SQLiteDataAdapter("select * from " + tbl_name + " where 1=2", connId);
 
             tbl = new DataTable();
             da.Fill(tbl);
@@ -141,12 +141,12 @@ namespace SQLite_Management_Studio
 
             SQLWorker sq = new SQLWorker();
 
-            sq.Execute_Query(com_str, cls_connection.conn_list[con_name], prm);
+            sq.Execute_Query(com_str, connId, prm);
 
-            if (sq.opr_flag == true)
+            if (sq.WorkerResult.Result == true)
                 MessageBox.Show("Record added");
             else
-                MessageBox.Show(sq.opr_msg);
+                MessageBox.Show(sq.WorkerResult.Message);
 
            
 

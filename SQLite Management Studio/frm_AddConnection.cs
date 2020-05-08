@@ -45,14 +45,16 @@ namespace SQLite_Management_Studio
         {
             if ((textBox1.Text.Length != 0) && (textBox1.Text != string.Empty))
             {
-                if (cls_connection.SaveConnection(textBox2.Text, textBox1.Text) == true)
+                try
+                {
+                    //ConnectionManager.SaveConnection(textBox2.Text, textBox1.Text);
                     MessageBox.Show("Connection Added");
-                else
-                    MessageBox.Show(cls_connection.Result);
+                }
+                catch (Exception ex)
+                {
 
-
-
-
+                    MessageBox.Show(ex.Message);
+                }
             }
         }
     }

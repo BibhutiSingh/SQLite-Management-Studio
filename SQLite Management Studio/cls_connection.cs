@@ -15,7 +15,7 @@ namespace SQLite_Management_Studio
     public class ConnectionManager : INotifyCollectionChanged, IDisposable
     {
         public Dictionary<int, SavedConnections> conn_list = new Dictionary<int, SavedConnections>();
-        private const string ConfigDb = "Data Source=Config.db";
+        private const string ConfigDb = "Config.db";
         private const string ConfigTable = "ConnectionMaster";
         //Singletons
         private ConnectionManager()
@@ -76,16 +76,15 @@ namespace SQLite_Management_Studio
             try
             {
                 var savedConnection = new SavedConnections(nm, pth);
-                using (var connConfig = new SQLiteConnection(ConfigDb))
+                using (var connConfig = GetConfigConnection())
                 {
-                    connConfig.Open();
                     string query = string.Format("INSERT INTO {0}(NAME,PATH) values ('{1}','{2}')", ConfigTable, nm, pth);
                     new SQLiteCommand(query, connConfig).ExecuteNonQuery();
                 }
                 if (CollectionChanged != null)
                 {
                     CollectionChanged(this,
-                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
             catch (Exception)
@@ -96,15 +95,14 @@ namespace SQLite_Management_Studio
         }
         public void RemoveConnection(int Id)
         {
-            using (var connConfig = new SQLiteConnection(ConfigDb))
+            using (var connConfig = GetConfigConnection())
             {
-                connConfig.Open();
-                string query = string.Format("DELETE FROM {0} WHERE ID=", ConfigTable, Id);
+                string query = string.Format("DELETE FROM {0} WHERE ID={1}", ConfigTable, Id);
                 new SQLiteCommand(query, connConfig).ExecuteNonQuery();
                 if (CollectionChanged != null)
                 {
                     CollectionChanged(this,
-                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove));
+                        new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Reset));
                 }
             }
         }
@@ -122,7 +120,7 @@ namespace SQLite_Management_Studio
                     {
                         if (dr == null || dr.HasRows == false)
                         {
-                            string createQuery = "CREATE TABLE ConnectionMaster(ID INTEGER NOT NULL CONSTRAINT \"PK_Users\" PRIMARY KEY AUTOINCREMENT,NAME TEXT NOT NULL, PATH TEXT NOT NULL, PASSWORD TEXT)";
+                            string createQuery = "CREATE TABLE ConnectionMaster (ID INTEGER NOT NULL CONSTRAINT \"PK_Users\" PRIMARY KEY AUTOINCREMENT,NAME TEXT NOT NULL, PATH TEXT NOT NULL, PASSWORD TEXT)";
                             var comm2 = configConnection.CreateCommand();
                             comm2.CommandText = createQuery;
                             comm2.ExecuteNonQuery();
@@ -139,19 +137,18 @@ namespace SQLite_Management_Studio
 
             return true;
         }
-        private void RefreshAllSavedConnections()
+        private  void RefreshAllSavedConnections()
         {
             try
             {
-                using (var connConfig = new SQLiteConnection(ConfigDb))
+                using (var connConfig = GetConfigConnection())
                 {
-                    connConfig.Open();
                     var comm = connConfig.CreateCommand();
                     comm.CommandText = "SELECT * FROM " + ConfigTable;
                     List<int> lstIds = new List<int>();
                     using (var rd = comm.ExecuteReader())
                     {
-                        if (rd.Read())
+                        while (rd.Read())
                         {
                             var obj = new SavedConnections()
                             {
@@ -171,11 +168,11 @@ namespace SQLite_Management_Studio
                         }
                     }
                     var removedConnections = conn_list.Where(x => lstIds.All(y => y != x.Key));
-                    foreach (var item in removedConnections)
-                    {
-                        conn_list[item.Key].Dispose();
-                        conn_list.Remove(item.Key);
-                    }
+                    //foreach (var item in removedConnections)
+                    //{
+                    //    conn_list[item.Key].Dispose();
+                    //    conn_list.Remove(item.Key);
+                    //}
                 }
             }
             catch (Exception)
@@ -238,8 +235,8 @@ namespace SQLite_Management_Studio
                 if (ActiveConnection == null)
                 {
                     ActiveConnection = new SQLiteConnection($"Data Source={this.Path}");
-                    ActiveConnection.Open();
                     ActiveConnection.StateChange += ActiveConnection_StateChange;
+                    ActiveConnection.Open();                    
                 }
                 if (ActiveConnection.State != System.Data.ConnectionState.Open)
                 {

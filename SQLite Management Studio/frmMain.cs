@@ -1,15 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Data.SQLite;
-using System.Text.RegularExpressions;
-
-
+using System.Linq;
+using System.Windows.Forms;
 
 namespace SQLite_Management_Studio
 {
@@ -33,6 +28,15 @@ namespace SQLite_Management_Studio
             InitializeComponent();
             obj_sql = new SQLWorker();
             connectionManager = ConnectionManager.GetConnectionManager();
+            connectionManager.CollectionChanged += ConnectionManager_CollectionChanged;
+        }
+
+        private void ConnectionManager_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                Connections_Ref();
+            }
         }
 
         private void ConnectionAdd_Click(object sender, EventArgs e)
@@ -45,6 +49,11 @@ namespace SQLite_Management_Studio
         {
 
             Connections_Ref();
+            tv_connections.ImageList = this.imgList;
+            SQLWorkbook sq = new SQLWorkbook();
+            sq.Size = tabPage1.Size;
+
+            tabPage1.Controls.Add(sq);
         }
 
         private void Connections_Ref()
@@ -53,10 +62,9 @@ namespace SQLite_Management_Studio
             conns.Name = "CONN";
             conns.Text = "Connections";
             conns.Tag = "CONN";
+            conns.ImageIndex = conns.SelectedImageIndex = 0;
 
             tv_connections.Nodes.Add(conns);
-
-
 
             foreach (var item in connectionManager.conn_list.Values)
             {
@@ -65,7 +73,12 @@ namespace SQLite_Management_Studio
                 main_nodes.Text = item.Name;
                 main_nodes.ToolTipText = item.Path;
                 main_nodes.Tag = item.ID;
+                conns.ImageIndex = conns.SelectedImageIndex = 0;
                 tv_connections.Nodes["CONN"].Nodes.Add(main_nodes);
+                if (item.IsConnectionActive)
+                {
+                    tv_connections.Nodes["CONN"].LastNode.Expand();
+                }
             }
 
             conns.Expand();
@@ -78,11 +91,13 @@ namespace SQLite_Management_Studio
             nodeTable.Name = "OBJ";
             nodeTable.Text = "Tables";
             nodeTable.Tag = currConnId;
+            nodeTable.ImageIndex = nodeTable.SelectedImageIndex = 1;
 
             TreeNode nodeView = new TreeNode();
             nodeView.Name = "OBJ";
             nodeView.Text = "Views";
             nodeView.Tag = currConnId;
+            nodeView.ImageIndex = nodeView.SelectedImageIndex = 2;
             using (SQLiteDataReader dr = obj_sql.Execute_DataReader("SELECT * FROM sqlite_master WHERE type in ('table','view')",
                  currConnId))
             {
@@ -94,10 +109,12 @@ namespace SQLite_Management_Studio
                     tbls.Tag = currConnId;
                     if (dr["type"].ToString().ToUpper() == "TABLE")
                     {
+                        tbls.ImageIndex = tbls.SelectedImageIndex = 1;
                         nodeTable.Nodes.Add(tbls);
                     }
                     else
                     {
+                        tbls.ImageIndex = tbls.SelectedImageIndex = 2;
                         nodeView.Nodes.Add(tbls);
                     }
 
@@ -147,7 +164,7 @@ namespace SQLite_Management_Studio
 
             txt_status.Text = e.Node.Name;
 
-            if (e.Node.Name == "TABLE")//|| e.Node.Name =="VIEW"
+            if (e.Node.Name == "TABLE" || e.Node.Name == "VIEW")
             {
                 var connId = Convert.ToInt32(e.Node.Tag);
 
@@ -174,24 +191,21 @@ namespace SQLite_Management_Studio
                     txt_status.Text = obj_sql.WorkerResult.Message;
 
 
-                DataTable tbl_struct = new DataTable();
-                DataColumn col_name = new DataColumn("Column Name");
-                tbl_struct.Columns.Add(col_name);
-
-                DataColumn col_dtyp = new DataColumn("Column DataType");
-                tbl_struct.Columns.Add(col_dtyp);
-
-                foreach (DataColumn item in tbl.Columns)
+                using (SQLiteDataReader dr = obj_sql.Execute_DataReader($"SELECT * FROM {e.Node.Text} WHERE 1=2",
+                 connId))
                 {
-                    var rw = tbl_struct.NewRow();
-                    rw[0] = item.ColumnName;
-                    rw[1] = item.DataType.ToString();
+                    dg_struct.DataSource = dr.GetSchemaTable().AsEnumerable()
+                        .Select(x => new
+                        {
+                            ColumnOrdinal = x.Field<int>("ColumnOrdinal"),
+                            ColumnName = x.Field<string>("ColumnName"),
+                            DataTypeName = x.Field<string>("DataTypeName"),
+                            AllowDBNull = x.Field<bool>("AllowDBNull"),
+                            IsKey = x.Field<bool>("IsKey"),
+                            IsAutoIncrement = x.Field<bool>("IsAutoIncrement")
+                        }).ToList();
 
-                    tbl_struct.Rows.Add(rw);
                 }
-
-                dg_struct.DataSource = null;
-                dg_struct.DataSource = tbl_struct;
 
             }
 
@@ -253,7 +267,7 @@ namespace SQLite_Management_Studio
             {
                 int currConnId = Convert.ToInt32(curr_node.Tag);
                 connectionManager.RemoveConnection(currConnId);
-
+                RefreshConnectionTree();
             }
         }
 

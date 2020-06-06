@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.split = new System.Windows.Forms.SplitContainer();
+            this.txt = new System.Windows.Forms.RichTextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.cmb_connections = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -36,16 +37,6 @@
             this.btn_run = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.dg = new System.Windows.Forms.DataGridView();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.button1 = new System.Windows.Forms.Button();
-            this.dgres = new System.Windows.Forms.DataGridView();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.lbl_Status = new System.Windows.Forms.ToolStripStatusLabel();
-            this.txt_Status = new System.Windows.Forms.ToolStripStatusLabel();
-            this.prg = new System.Windows.Forms.ToolStripProgressBar();
-            this.txt = new System.Windows.Forms.TextBox();
-            this.btn_Export = new System.Windows.Forms.Button();
             this.pnl_Export = new System.Windows.Forms.Panel();
             this.btn_ok = new System.Windows.Forms.Button();
             this.btn_Cancel = new System.Windows.Forms.Button();
@@ -54,17 +45,26 @@
             this.textBox3 = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
+            this.btn_Export = new System.Windows.Forms.Button();
+            this.dg = new System.Windows.Forms.DataGridView();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.button1 = new System.Windows.Forms.Button();
+            this.dgres = new System.Windows.Forms.DataGridView();
+            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.lbl_Status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.txt_Status = new System.Windows.Forms.ToolStripStatusLabel();
+            this.prg = new System.Windows.Forms.ToolStripProgressBar();
             ((System.ComponentModel.ISupportInitialize)(this.split)).BeginInit();
             this.split.Panel1.SuspendLayout();
             this.split.Panel2.SuspendLayout();
             this.split.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
+            this.pnl_Export.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).BeginInit();
             this.tabPage2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgres)).BeginInit();
             this.statusStrip1.SuspendLayout();
-            this.pnl_Export.SuspendLayout();
             this.SuspendLayout();
             // 
             // split
@@ -83,6 +83,7 @@
             this.split.Panel1.Controls.Add(this.label1);
             this.split.Panel1.Controls.Add(this.btn_clear);
             this.split.Panel1.Controls.Add(this.btn_run);
+            this.split.Panel1.Paint += new System.Windows.Forms.PaintEventHandler(this.split_Panel1_Paint);
             // 
             // split.Panel2
             // 
@@ -91,6 +92,19 @@
             this.split.Size = new System.Drawing.Size(825, 550);
             this.split.SplitterDistance = 200;
             this.split.TabIndex = 0;
+            // 
+            // txt
+            // 
+            this.txt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txt.Location = new System.Drawing.Point(17, 38);
+            this.txt.Name = "txt";
+            this.txt.Size = new System.Drawing.Size(790, 148);
+            this.txt.TabIndex = 6;
+            this.txt.Text = "";
+            this.txt.TextChanged += new System.EventHandler(this.txt_TextChanged);
             // 
             // button2
             // 
@@ -143,9 +157,9 @@
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this.tabPage1);
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Location = new System.Drawing.Point(3, 3);
@@ -166,111 +180,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Result Grid";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // dg
-            // 
-            this.dg.AllowUserToAddRows = false;
-            this.dg.AllowUserToDeleteRows = false;
-            this.dg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.dg.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dg.Location = new System.Drawing.Point(10, 34);
-            this.dg.Name = "dg";
-            this.dg.ReadOnly = true;
-            this.dg.Size = new System.Drawing.Size(779, 245);
-            this.dg.TabIndex = 0;
-            // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.button1);
-            this.tabPage2.Controls.Add(this.dgres);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(801, 290);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Result Panel";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // button1
-            // 
-            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.button1.Location = new System.Drawing.Point(713, 6);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 25);
-            this.button1.TabIndex = 3;
-            this.button1.Text = "Clear";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
-            // 
-            // dgres
-            // 
-            this.dgres.AllowUserToAddRows = false;
-            this.dgres.AllowUserToDeleteRows = false;
-            this.dgres.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgres.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgres.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgres.Location = new System.Drawing.Point(11, 34);
-            this.dgres.Name = "dgres";
-            this.dgres.ReadOnly = true;
-            this.dgres.Size = new System.Drawing.Size(777, 243);
-            this.dgres.TabIndex = 0;
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.lbl_Status,
-            this.txt_Status,
-            this.prg});
-            this.statusStrip1.Location = new System.Drawing.Point(0, 322);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(823, 22);
-            this.statusStrip1.TabIndex = 0;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // lbl_Status
-            // 
-            this.lbl_Status.Name = "lbl_Status";
-            this.lbl_Status.Size = new System.Drawing.Size(60, 17);
-            this.lbl_Status.Text = "Last Query";
-            // 
-            // txt_Status
-            // 
-            this.txt_Status.Name = "txt_Status";
-            this.txt_Status.Size = new System.Drawing.Size(0, 17);
-            // 
-            // prg
-            // 
-            this.prg.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
-            this.prg.Name = "prg";
-            this.prg.Size = new System.Drawing.Size(100, 16);
-            // 
-            // txt
-            // 
-            this.txt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt.Font = new System.Drawing.Font("Courier New", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt.Location = new System.Drawing.Point(14, 41);
-            this.txt.Multiline = true;
-            this.txt.Name = "txt";
-            this.txt.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txt.Size = new System.Drawing.Size(794, 144);
-            this.txt.TabIndex = 6;
-            // 
-            // btn_Export
-            // 
-            this.btn_Export.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btn_Export.Location = new System.Drawing.Point(696, 6);
-            this.btn_Export.Name = "btn_Export";
-            this.btn_Export.Size = new System.Drawing.Size(93, 25);
-            this.btn_Export.TabIndex = 4;
-            this.btn_Export.Text = "Export Result";
-            this.btn_Export.UseVisualStyleBackColor = true;
-            this.btn_Export.Click += new System.EventHandler(this.btn_Export_Click);
             // 
             // pnl_Export
             // 
@@ -358,6 +267,98 @@
             this.textBox1.TabIndex = 11;
             this.textBox1.Text = "C:\\Result.txt";
             // 
+            // btn_Export
+            // 
+            this.btn_Export.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btn_Export.Location = new System.Drawing.Point(696, 6);
+            this.btn_Export.Name = "btn_Export";
+            this.btn_Export.Size = new System.Drawing.Size(93, 25);
+            this.btn_Export.TabIndex = 4;
+            this.btn_Export.Text = "Export Result";
+            this.btn_Export.UseVisualStyleBackColor = true;
+            this.btn_Export.Click += new System.EventHandler(this.btn_Export_Click);
+            // 
+            // dg
+            // 
+            this.dg.AllowUserToAddRows = false;
+            this.dg.AllowUserToDeleteRows = false;
+            this.dg.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dg.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dg.Location = new System.Drawing.Point(10, 34);
+            this.dg.Name = "dg";
+            this.dg.ReadOnly = true;
+            this.dg.Size = new System.Drawing.Size(779, 245);
+            this.dg.TabIndex = 0;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.button1);
+            this.tabPage2.Controls.Add(this.dgres);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(801, 290);
+            this.tabPage2.TabIndex = 1;
+            this.tabPage2.Text = "Result Panel";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(713, 6);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 25);
+            this.button1.TabIndex = 3;
+            this.button1.Text = "Clear";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
+            // dgres
+            // 
+            this.dgres.AllowUserToAddRows = false;
+            this.dgres.AllowUserToDeleteRows = false;
+            this.dgres.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgres.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dgres.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dgres.Location = new System.Drawing.Point(11, 34);
+            this.dgres.Name = "dgres";
+            this.dgres.ReadOnly = true;
+            this.dgres.Size = new System.Drawing.Size(777, 243);
+            this.dgres.TabIndex = 0;
+            // 
+            // statusStrip1
+            // 
+            this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.lbl_Status,
+            this.txt_Status,
+            this.prg});
+            this.statusStrip1.Location = new System.Drawing.Point(0, 322);
+            this.statusStrip1.Name = "statusStrip1";
+            this.statusStrip1.Size = new System.Drawing.Size(823, 22);
+            this.statusStrip1.TabIndex = 0;
+            this.statusStrip1.Text = "statusStrip1";
+            // 
+            // lbl_Status
+            // 
+            this.lbl_Status.Name = "lbl_Status";
+            this.lbl_Status.Size = new System.Drawing.Size(63, 17);
+            this.lbl_Status.Text = "Last Query";
+            // 
+            // txt_Status
+            // 
+            this.txt_Status.Name = "txt_Status";
+            this.txt_Status.Size = new System.Drawing.Size(0, 17);
+            // 
+            // prg
+            // 
+            this.prg.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.prg.Name = "prg";
+            this.prg.Size = new System.Drawing.Size(100, 16);
+            // 
             // SQLWorkbook
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -373,13 +374,13 @@
             this.split.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
+            this.pnl_Export.ResumeLayout(false);
+            this.pnl_Export.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dg)).EndInit();
             this.tabPage2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgres)).EndInit();
             this.statusStrip1.ResumeLayout(false);
             this.statusStrip1.PerformLayout();
-            this.pnl_Export.ResumeLayout(false);
-            this.pnl_Export.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -402,7 +403,6 @@
         private System.Windows.Forms.ToolStripStatusLabel txt_Status;
         private System.Windows.Forms.ToolStripProgressBar prg;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.TextBox txt;
         private System.Windows.Forms.Button btn_Export;
         private System.Windows.Forms.Panel pnl_Export;
         private System.Windows.Forms.Button btn_ok;
@@ -412,5 +412,6 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.RichTextBox txt;
     }
 }

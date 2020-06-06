@@ -8,6 +8,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace SQLite_Management_Studio
 {
@@ -29,16 +30,13 @@ namespace SQLite_Management_Studio
         {
             InitializeComponent();
 
-
-           DataColumn col1=new DataColumn ("Time");
+            DataColumn col1=new DataColumn ("Time");
             tbl_res .Columns .Add (col1 );
                DataColumn col2=new DataColumn ("Query");
             tbl_res .Columns .Add (col2 );
            
                DataColumn col3=new DataColumn ("Result");
             tbl_res .Columns .Add (col3 );
-
-
             dgres.DataSource = tbl_res;
 
             Refresh_Connection();
@@ -47,10 +45,17 @@ namespace SQLite_Management_Studio
 
         void Refresh_Connection()
         {
-            cmb_connections.DataSource = ConnectionManager.GetConnectionManager().conn_list.Values.ToList();
-
+            var conns = ConnectionManager.GetConnectionManager().conn_list
+                .Values
+                .Where(x => x.IsConnectionActive)
+                .ToList();
+            if (conns != null && conns.Count>0)
+            {
+                cmb_connections.DataSource = conns;
             cmb_connections.DisplayMember = "Name";
-            cmb_connections.ValueMember = "ID";
+                cmb_connections.ValueMember = "ID";
+            }
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -149,7 +154,6 @@ namespace SQLite_Management_Studio
             {
                 txt_Status.Text = "Result Expoted";
                 prg.Value = 0;
-                th.Suspend();
                 th = null;
             }
             else
@@ -239,6 +243,45 @@ namespace SQLite_Management_Studio
         private void btn_Cancel_Click(object sender, EventArgs e)
         {
             pnl_Export.Visible = false;
+        }
+
+        private void split_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+        //Syntax Hightlighter
+        private void txt_TextChanged(object sender, EventArgs e)
+        {
+            // getting keywords/functions
+            string keywords = @"\b(select|from|table|where|group by|having|and|or|between|in|join)\b";
+            MatchCollection keywordMatches = Regex.Matches(txt.Text, keywords);
+
+            // saving the original caret position + forecolor
+            int originalIndex = txt.SelectionStart;
+            int originalLength = txt.SelectionLength;
+            Color originalColor = Color.Black;
+            // MANDATORY - focuses a label before highlighting (avoids blinking)
+            label1.Focus();
+
+            // removes any previous highlighting (so modified words won't remain highlighted)
+            txt.SelectionStart = 0;
+            txt.SelectionLength = txt.Text.Length;
+            txt.SelectionColor = originalColor;
+
+            // scanning...
+            foreach (Match m in keywordMatches)
+            {
+                txt.SelectionStart = m.Index;
+                txt.SelectionLength = m.Length;
+                txt.SelectionColor = Color.Blue;
+            }
+            // restoring the original colors, for further writing
+            txt.SelectionStart = originalIndex;
+            txt.SelectionLength = originalLength;
+            txt.SelectionColor = originalColor;
+
+            // giving back the focus
+            txt.Focus();
         }
     }
 }

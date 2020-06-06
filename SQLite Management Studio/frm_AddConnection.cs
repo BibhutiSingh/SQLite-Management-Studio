@@ -24,16 +24,7 @@ namespace SQLite_Management_Studio
 
             if (opd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
-                
-
-               
-                    textBox1.Text = opd.FileName;
-
-
-
-               
-
-
+                textBox1.Text = opd.FileName;
             }
             else
             {
@@ -43,11 +34,11 @@ namespace SQLite_Management_Studio
 
         private void button4_Click(object sender, EventArgs e)
         {
-            if ((textBox1.Text.Length != 0) && (textBox1.Text != string.Empty))
+            if (!string.IsNullOrEmpty(textBox1.Text) && !string.IsNullOrEmpty(textBox2.Text))
             {
                 try
                 {
-                    //ConnectionManager.SaveConnection(textBox2.Text, textBox1.Text);
+                    ConnectionManager.GetConnectionManager().SaveConnection(textBox2.Text, textBox1.Text);
                     MessageBox.Show("Connection Added");
                 }
                 catch (Exception ex)

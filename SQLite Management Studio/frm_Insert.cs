@@ -6,7 +6,6 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using System.Data;
 using System.Data.SQLite;
 
 namespace SQLite_Management_Studio

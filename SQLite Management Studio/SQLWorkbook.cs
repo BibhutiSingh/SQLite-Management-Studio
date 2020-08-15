@@ -253,7 +253,7 @@ namespace SQLite_Management_Studio
         private void txt_TextChanged(object sender, EventArgs e)
         {
             // getting keywords/functions
-            string keywords = @"\b(select|from|table|where|group by|having|and|or|between|in|join)\b";
+            string keywords = @"\b(select|from|table|where|group by|having|and|or|between|in|join|insert|into|values|update|delete)\b";
             MatchCollection keywordMatches = Regex.Matches(txt.Text, keywords);
 
             // saving the original caret position + forecolor

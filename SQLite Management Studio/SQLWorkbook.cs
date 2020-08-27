@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using System.IO;
 using System.Threading;
 using System.Text.RegularExpressions;
+using ScintillaNET;
 
 namespace SQLite_Management_Studio
 {
@@ -40,8 +41,76 @@ namespace SQLite_Management_Studio
             dgres.DataSource = tbl_res;
 
             Refresh_Connection();
+            //
+            
+            
+            //STYLING
+            InitColors();
+            InitSyntaxColoring();
+
+            // NUMBER MARGIN
+            InitNumberMargin();
 
         }
+
+        private void InitNumberMargin()
+        {
+            int BACK_COLOR = 0xCCCCCC;
+            int FORE_COLOR = 0x212121;
+            int NUMBER_MARGIN = 1;
+            txt.Styles[Style.LineNumber].BackColor = IntToColor(BACK_COLOR);
+            txt.Styles[Style.LineNumber].ForeColor = IntToColor(FORE_COLOR);
+            txt.Styles[Style.IndentGuide].ForeColor = IntToColor(FORE_COLOR);
+            txt.Styles[Style.IndentGuide].BackColor = IntToColor(BACK_COLOR);
+
+            var nums = txt.Margins[NUMBER_MARGIN];
+            nums.Width = 30;
+            nums.Type = MarginType.Number;
+            nums.Sensitive = true;
+            nums.Mask = 0;
+        }
+
+        private void InitSyntaxColoring()
+        {
+            // Configure the default style
+            txt.StyleResetDefault();
+            txt.Styles[Style.Default].Font = "Consolas";
+            txt.Styles[Style.Default].Size = 12;
+            txt.Styles[Style.Default].BackColor = IntToColor(0xFFFFFF);
+            txt.Styles[Style.Default].ForeColor = IntToColor(0x212121);
+            txt.StyleClearAll();
+
+            // Configure the CPP (C#) lexer styles
+            txt.Styles[Style.Sql.Identifier].ForeColor = IntToColor(0xD0DAE2);
+            txt.Styles[Style.Sql.Comment].ForeColor = IntToColor(0xBD758B);
+            txt.Styles[Style.Sql.CommentLine].ForeColor = IntToColor(0x40BF57);
+            txt.Styles[Style.Sql.CommentDoc].ForeColor = IntToColor(0x2FAE35);
+            txt.Styles[Style.Sql.Number].ForeColor = IntToColor(0xFFFF00);
+            txt.Styles[Style.Sql.String].ForeColor = IntToColor(0xFFFF00);
+            txt.Styles[Style.Sql.Character].ForeColor = IntToColor(0xE95454);
+            txt.Styles[Style.Sql.Operator].ForeColor = IntToColor(0xE0E0E0);
+            txt.Styles[Style.Sql.CommentLineDoc].ForeColor = IntToColor(0x77A7DB);
+            txt.Styles[Style.Sql.Word].ForeColor = IntToColor(0x48A8EE);
+            txt.Styles[Style.Sql.Word2].ForeColor = IntToColor(0xF98906);
+            txt.Styles[Style.Sql.CommentDocKeyword].ForeColor = IntToColor(0xB3D991);
+            txt.Styles[Style.Sql.CommentDocKeywordError].ForeColor = IntToColor(0xFF0000);
+
+            txt.Lexer = Lexer.Sql;
+
+            txt.SetKeywords(0, "select from where group by having delete update insert values into");
+            txt.SetKeywords(1, "* desc set rownum top min max avg count");
+
+        }
+
+        private void InitColors()
+        {
+            txt.SetSelectionBackColor(true, IntToColor(0x114D9C));
+        }
+        public static Color IntToColor(int rgb)
+        {
+            return Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
+        }
+
 
         void Refresh_Connection()
         {
@@ -78,7 +147,7 @@ namespace SQLite_Management_Studio
             else
             {
                 dg.DataSource = null;
-                if(txt.SelectionLength==0)
+                if(txt.SelectedText.Length==0)
                     tbl = sql.Execute_DataTable(txt.Text, Convert.ToInt32( cmb_connections.SelectedValue));
                 else
                     tbl = sql.Execute_DataTable(txt.SelectedText, Convert.ToInt32(cmb_connections.SelectedValue));
@@ -91,7 +160,7 @@ namespace SQLite_Management_Studio
                 DataRow dr = tbl_res.NewRow();
 
                 dr[0] = DateTime.Now;
-                if (txt.SelectionLength == 0)
+                if (txt.SelectedText.Length == 0)
                     dr[1] = txt.Text;
                 else
                     dr[1] = txt.SelectedText ;
@@ -249,39 +318,9 @@ namespace SQLite_Management_Studio
         {
 
         }
-        //Syntax Hightlighter
-        private void txt_TextChanged(object sender, EventArgs e)
+        private void txt_Click(object sender, EventArgs e)
         {
-            // getting keywords/functions
-            string keywords = @"\b(select|from|table|where|group by|having|and|or|between|in|join|insert|into|values|update|delete)\b";
-            MatchCollection keywordMatches = Regex.Matches(txt.Text, keywords);
 
-            // saving the original caret position + forecolor
-            int originalIndex = txt.SelectionStart;
-            int originalLength = txt.SelectionLength;
-            Color originalColor = Color.Black;
-            // MANDATORY - focuses a label before highlighting (avoids blinking)
-            label1.Focus();
-
-            // removes any previous highlighting (so modified words won't remain highlighted)
-            txt.SelectionStart = 0;
-            txt.SelectionLength = txt.Text.Length;
-            txt.SelectionColor = originalColor;
-
-            // scanning...
-            foreach (Match m in keywordMatches)
-            {
-                txt.SelectionStart = m.Index;
-                txt.SelectionLength = m.Length;
-                txt.SelectionColor = Color.Blue;
-            }
-            // restoring the original colors, for further writing
-            txt.SelectionStart = originalIndex;
-            txt.SelectionLength = originalLength;
-            txt.SelectionColor = originalColor;
-
-            // giving back the focus
-            txt.Focus();
         }
     }
 }

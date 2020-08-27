@@ -29,8 +29,6 @@
         private void InitializeComponent()
         {
             this.split = new System.Windows.Forms.SplitContainer();
-            this.txt = new System.Windows.Forms.RichTextBox();
-            this.button2 = new System.Windows.Forms.Button();
             this.cmb_connections = new System.Windows.Forms.ComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.btn_clear = new System.Windows.Forms.Button();
@@ -54,6 +52,7 @@
             this.lbl_Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.txt_Status = new System.Windows.Forms.ToolStripStatusLabel();
             this.prg = new System.Windows.Forms.ToolStripProgressBar();
+            this.txt = new ScintillaNET.Scintilla();
             ((System.ComponentModel.ISupportInitialize)(this.split)).BeginInit();
             this.split.Panel1.SuspendLayout();
             this.split.Panel2.SuspendLayout();
@@ -78,7 +77,6 @@
             // split.Panel1
             // 
             this.split.Panel1.Controls.Add(this.txt);
-            this.split.Panel1.Controls.Add(this.button2);
             this.split.Panel1.Controls.Add(this.cmb_connections);
             this.split.Panel1.Controls.Add(this.label1);
             this.split.Panel1.Controls.Add(this.btn_clear);
@@ -92,29 +90,6 @@
             this.split.Size = new System.Drawing.Size(825, 550);
             this.split.SplitterDistance = 200;
             this.split.TabIndex = 0;
-            // 
-            // txt
-            // 
-            this.txt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txt.Font = new System.Drawing.Font("Consolas", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txt.Location = new System.Drawing.Point(17, 38);
-            this.txt.Name = "txt";
-            this.txt.Size = new System.Drawing.Size(790, 148);
-            this.txt.TabIndex = 6;
-            this.txt.Text = "";
-            this.txt.TextChanged += new System.EventHandler(this.txt_TextChanged);
-            // 
-            // button2
-            // 
-            this.button2.Location = new System.Drawing.Point(238, 9);
-            this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(39, 23);
-            this.button2.TabIndex = 5;
-            this.button2.Text = "...";
-            this.button2.UseVisualStyleBackColor = true;
-            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // cmb_connections
             // 
@@ -359,6 +334,18 @@
             this.prg.Name = "prg";
             this.prg.Size = new System.Drawing.Size(100, 16);
             // 
+            // txt
+            // 
+            this.txt.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txt.Lexer = ScintillaNET.Lexer.Sql;
+            this.txt.Location = new System.Drawing.Point(13, 38);
+            this.txt.Name = "txt";
+            this.txt.Size = new System.Drawing.Size(794, 150);
+            this.txt.TabIndex = 5;
+            this.txt.Click += new System.EventHandler(this.txt_Click);
+            // 
             // SQLWorkbook
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -402,7 +389,6 @@
         private System.Windows.Forms.ToolStripStatusLabel lbl_Status;
         private System.Windows.Forms.ToolStripStatusLabel txt_Status;
         private System.Windows.Forms.ToolStripProgressBar prg;
-        private System.Windows.Forms.Button button2;
         private System.Windows.Forms.Button btn_Export;
         private System.Windows.Forms.Panel pnl_Export;
         private System.Windows.Forms.Button btn_ok;
@@ -412,6 +398,6 @@
         private System.Windows.Forms.TextBox textBox3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.RichTextBox txt;
+        private ScintillaNET.Scintilla txt;
     }
 }

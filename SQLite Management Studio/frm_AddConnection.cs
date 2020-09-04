@@ -38,7 +38,7 @@ namespace SQLite_Management_Studio
             {
                 try
                 {
-                    ConnectionManager.GetConnectionManager().SaveConnection(textBox2.Text, textBox1.Text);
+                    ConnectionManagerV2.GetConnectionManager().SaveConnection(textBox2.Text, textBox1.Text);
                     MessageBox.Show("Connection Added");
                 }
                 catch (Exception ex)

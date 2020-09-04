@@ -21,24 +21,14 @@ namespace SQLite_Management_Studio
         TreeNode tmp_node = null;
 
         DataTable tbl = null;
-        ConnectionManager connectionManager;
+        ConnectionManagerV2 connectionManager;
 
         public frmMain()
         {
             InitializeComponent();
             obj_sql = new SQLWorker();
-            connectionManager = ConnectionManager.GetConnectionManager();
-            connectionManager.CollectionChanged += ConnectionManager_CollectionChanged;
+            connectionManager = ConnectionManagerV2.GetConnectionManager();
         }
-
-        private void ConnectionManager_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            if (e.Action == NotifyCollectionChangedAction.Add || e.Action == NotifyCollectionChangedAction.Remove)
-            {
-                Connections_Ref();
-            }
-        }
-
         private void ConnectionAdd_Click(object sender, EventArgs e)
         {
             frm = new frmNewTable();
@@ -52,8 +42,8 @@ namespace SQLite_Management_Studio
             tv_connections.ImageList = this.imgList;
             SQLWorkbook sq = new SQLWorkbook();
             sq.Size = tabPage1.Size;
-
             tabPage1.Controls.Add(sq);
+            connectionManager.Register(sq);
         }
 
         private void Connections_Ref()
@@ -124,6 +114,8 @@ namespace SQLite_Management_Studio
             curr_node.Nodes.Add(nodeTable);
             curr_node.Nodes.Add(nodeView);
             curr_node.Expand();
+            //update connection manager
+            connectionManager.ConnectSavedConection(currConnId);
         }
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)
@@ -284,6 +276,7 @@ namespace SQLite_Management_Studio
             pg_new.Size = tb.Size;
 
             SQLWorkbook sq = new SQLWorkbook();
+            connectionManager.Register(sq);
             sq.Size = pg_new.Size;
 
             pg_new.Controls.Add(sq);
@@ -316,6 +309,7 @@ namespace SQLite_Management_Studio
             pg_new.Size = tb.Size;
 
             SQLWorkbook sq = new SQLWorkbook();
+            connectionManager.Register(sq);
             sq.Size = pg_new.Size;
 
             pg_new.Controls.Add(sq);
@@ -370,6 +364,11 @@ namespace SQLite_Management_Studio
         {
             //frm_Insert frm = new frm_Insert(curr_node.Text, curr_node.Tag.ToString());
             //frm.ShowDialog();
+        }
+
+        private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+
         }
     }
 }

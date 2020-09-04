@@ -18,7 +18,7 @@ namespace SQLite_Management_Studio
         public SqlWorkerQueryResult WorkerResult { get; set; }
         private SQLiteConnection GetConnection(int Id)
         {
-            return ConnectionManager.GetConnectionManager().GetConnection(Id).GetActiveConnection();
+            return ConnectionManagerV2.GetConnectionManager().GetConnection(Id).GetActiveConnection();
         }
         public void Execute_Query(string com_str, int connId)
         {

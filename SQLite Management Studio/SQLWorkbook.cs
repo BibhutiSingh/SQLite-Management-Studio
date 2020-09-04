@@ -13,7 +13,7 @@ using ScintillaNET;
 
 namespace SQLite_Management_Studio
 {
-    public partial class SQLWorkbook : UserControl
+    public partial class SQLWorkbook : UserControl,IConnectionClient
     {
 
         SQLWorker sql = new SQLWorker();
@@ -39,10 +39,7 @@ namespace SQLite_Management_Studio
                DataColumn col3=new DataColumn ("Result");
             tbl_res .Columns .Add (col3 );
             dgres.DataSource = tbl_res;
-
             Refresh_Connection();
-            //
-            
             
             //STYLING
             InitColors();
@@ -52,7 +49,7 @@ namespace SQLite_Management_Studio
             InitNumberMargin();
 
         }
-
+        #region SyntaxHighlighting        
         private void InitNumberMargin()
         {
             int BACK_COLOR = 0xCCCCCC;
@@ -69,7 +66,6 @@ namespace SQLite_Management_Studio
             nums.Sensitive = true;
             nums.Mask = 0;
         }
-
         private void InitSyntaxColoring()
         {
             // Configure the default style
@@ -101,7 +97,6 @@ namespace SQLite_Management_Studio
             txt.SetKeywords(1, "* desc set rownum top min max avg count");
 
         }
-
         private void InitColors()
         {
             txt.SetSelectionBackColor(true, IntToColor(0x114D9C));
@@ -110,11 +105,12 @@ namespace SQLite_Management_Studio
         {
             return Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
         }
+        #endregion
 
 
         void Refresh_Connection()
         {
-            var conns = ConnectionManager.GetConnectionManager().conn_list
+            var conns = ConnectionManagerV2.GetConnectionManager().conn_list
                 .Values
                 .Where(x => x.IsConnectionActive)
                 .ToList();
@@ -321,6 +317,22 @@ namespace SQLite_Management_Studio
         private void txt_Click(object sender, EventArgs e)
         {
 
+        }
+
+        public void NotifyChange(ConnectionChangeType connectionChangeType)
+        {
+            switch (connectionChangeType)
+            {
+                case ConnectionChangeType.Add:
+                    break;
+                case ConnectionChangeType.Connected:
+                case ConnectionChangeType.Disconnected:
+                case ConnectionChangeType.Removed:
+                    Refresh_Connection();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

@@ -60,7 +60,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="cls_connection.cs" />
+    <Compile Include="ConnectionManagerV2.cs" />
     <Compile Include="frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -93,6 +93,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SavedConnections.cs" />
     <Compile Include="SQLWorkbook.cs">
       <SubType>UserControl</SubType>
     </Compile>

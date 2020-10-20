@@ -46,8 +46,19 @@ namespace SQLite_Management_Studio
         {
             try
             {
-                SQLiteConnection ConfigConnection = new SQLiteConnection($"Data Source = {ConfigDb}");
-                ConfigConnection.Open();
+                
+               SQLiteConnection ConfigConnection = new SQLiteConnection($"Data Source = {ConfigDb}");
+               ConfigConnection.Open();         
+                
+                //check if ConfigDb is ok
+                SQLiteCommand com = new SQLiteCommand(ConfigConnection);
+                com.CommandText = $"select count(*) from sqlite_master where type='table' and name ='{ConfigTable}'";
+                int res = Convert.ToInt32(com.ExecuteScalar());
+                if (res==0)
+                {
+                    com.CommandText = $"CREATE TABLE {ConfigTable} (ID INTEGER NOT NULL CONSTRAINT \"PK_Users\" PRIMARY KEY AUTOINCREMENT,NAME TEXT NOT NULL, PATH TEXT NOT NULL, PASSWORD TEXT)";
+                    com.ExecuteNonQuery();
+                }
                 return ConfigConnection;
             }
             catch (Exception)

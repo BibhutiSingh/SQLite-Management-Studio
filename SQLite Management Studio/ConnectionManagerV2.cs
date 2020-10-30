@@ -36,6 +36,8 @@ namespace SQLite_Management_Studio
         }
         private void NotifyAll(ConnectionChangeType connectionChangeType)
         {
+            //Refresh Connections
+            RefreshAllSavedConnections();
             foreach (var item in clients)
             {
                 item.NotifyChange(connectionChangeType);
@@ -100,7 +102,6 @@ namespace SQLite_Management_Studio
                             lstIds.Add(obj.ID);
                         }
                     }
-                    var removedConnections = conn_list.Where(x => lstIds.All(y => y != x.Key));
                 }
             }
             catch (Exception)

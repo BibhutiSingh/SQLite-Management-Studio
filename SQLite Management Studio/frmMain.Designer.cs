@@ -54,9 +54,9 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tv_connections = new System.Windows.Forms.TreeView();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton5 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton6 = new System.Windows.Forms.ToolStripButton();
+            this.btnAddConnection = new System.Windows.Forms.ToolStripButton();
+            this.btnConnectionRefresh = new System.Windows.Forms.ToolStripButton();
+            this.btnDeleteConnection = new System.Windows.Forms.ToolStripButton();
             this.tb = new System.Windows.Forms.TabControl();
             this.tb_Struct = new System.Windows.Forms.TabPage();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -174,7 +174,7 @@
             // tablesToolStripMenuItem
             // 
             this.tablesToolStripMenuItem.Name = "tablesToolStripMenuItem";
-            this.tablesToolStripMenuItem.Size = new System.Drawing.Size(106, 22);
+            this.tablesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tablesToolStripMenuItem.Text = "Tables";
             this.tablesToolStripMenuItem.Click += new System.EventHandler(this.tablesToolStripMenuItem_Click);
             // 
@@ -295,44 +295,44 @@
             // 
             this.toolStrip1.BackColor = System.Drawing.Color.White;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton4,
-            this.toolStripButton5,
-            this.toolStripButton6});
+            this.btnAddConnection,
+            this.btnConnectionRefresh,
+            this.btnDeleteConnection});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(251, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // toolStripButton4
+            // btnAddConnection
             // 
-            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton4.Image = global::SQLite_Management_Studio.Properties.Resources.Data_Connect;
-            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton4.ToolTipText = "Add Connection";
-            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
+            this.btnAddConnection.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnAddConnection.Image = global::SQLite_Management_Studio.Properties.Resources.Data_Connect;
+            this.btnAddConnection.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnAddConnection.Name = "btnAddConnection";
+            this.btnAddConnection.Size = new System.Drawing.Size(23, 22);
+            this.btnAddConnection.ToolTipText = "Add Connection";
+            this.btnAddConnection.Click += new System.EventHandler(this.toolStripButton4_Click);
             // 
-            // toolStripButton5
+            // btnConnectionRefresh
             // 
-            this.toolStripButton5.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton5.Image = global::SQLite_Management_Studio.Properties.Resources.Data_Refresh;
-            this.toolStripButton5.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton5.Name = "toolStripButton5";
-            this.toolStripButton5.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton5.Text = "Refresh Connections";
-            this.toolStripButton5.Click += new System.EventHandler(this.toolStripButton5_Click);
+            this.btnConnectionRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnConnectionRefresh.Image = global::SQLite_Management_Studio.Properties.Resources.Data_Refresh;
+            this.btnConnectionRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnConnectionRefresh.Name = "btnConnectionRefresh";
+            this.btnConnectionRefresh.Size = new System.Drawing.Size(23, 22);
+            this.btnConnectionRefresh.Text = "Refresh Connections";
+            this.btnConnectionRefresh.Click += new System.EventHandler(this.toolStripButton5_Click);
             // 
-            // toolStripButton6
+            // btnDeleteConnection
             // 
-            this.toolStripButton6.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.toolStripButton6.Image = global::SQLite_Management_Studio.Properties.Resources.Data_Close;
-            this.toolStripButton6.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton6.Name = "toolStripButton6";
-            this.toolStripButton6.Size = new System.Drawing.Size(23, 22);
-            this.toolStripButton6.Text = "Delete Connection";
-            this.toolStripButton6.Click += new System.EventHandler(this.toolStripButton6_Click);
+            this.btnDeleteConnection.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.btnDeleteConnection.Image = global::SQLite_Management_Studio.Properties.Resources.Data_Close;
+            this.btnDeleteConnection.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.btnDeleteConnection.Name = "btnDeleteConnection";
+            this.btnDeleteConnection.Size = new System.Drawing.Size(23, 22);
+            this.btnDeleteConnection.Text = "Delete Connection";
+            this.btnDeleteConnection.Click += new System.EventHandler(this.toolStripButton6_Click);
             // 
             // tb
             // 
@@ -525,6 +525,7 @@
             this.imgList.Images.SetKeyName(0, "Database.png");
             this.imgList.Images.SetKeyName(1, "table.png");
             this.imgList.Images.SetKeyName(2, "View.png");
+            this.imgList.Images.SetKeyName(3, "column.png");
             // 
             // frmMain
             // 
@@ -605,9 +606,9 @@
         private System.Windows.Forms.ToolStripButton btnAddTab;
         private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripButton toolStripButton4;
-        private System.Windows.Forms.ToolStripButton toolStripButton5;
-        private System.Windows.Forms.ToolStripButton toolStripButton6;
+        private System.Windows.Forms.ToolStripButton btnAddConnection;
+        private System.Windows.Forms.ToolStripButton btnConnectionRefresh;
+        private System.Windows.Forms.ToolStripButton btnDeleteConnection;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPage2;
         private System.Windows.Forms.DataGridView dg_struct;

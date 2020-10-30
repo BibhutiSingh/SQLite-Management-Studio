@@ -9,7 +9,7 @@ using System.Windows.Forms;
 namespace SQLite_Management_Studio
 {
 
-    public partial class frmMain : Form
+    public partial class frmMain : Form, IConnectionClient
     {
         frmNewTable frm;
 
@@ -28,6 +28,7 @@ namespace SQLite_Management_Studio
             InitializeComponent();
             obj_sql = new SQLWorker();
             connectionManager = ConnectionManagerV2.GetConnectionManager();
+            connectionManager.Register(this);
         }
         private void ConnectionAdd_Click(object sender, EventArgs e)
         {
@@ -48,7 +49,8 @@ namespace SQLite_Management_Studio
 
         private void Connections_Ref()
         {
-            TreeNode conns = new TreeNode();
+            tv_connections.Nodes.Clear();
+           TreeNode conns = new TreeNode();
             conns.Name = "CONN";
             conns.Text = "Connections";
             conns.Tag = "CONN";
@@ -174,7 +176,7 @@ namespace SQLite_Management_Studio
                 }
                 // MessageBox.Show(e.Node.Tag.ToString());
 
-                tbl = obj_sql.Execute_DataTable("SELECT * from " + e.Node.Text + " limit 100"
+                tbl = obj_sql.Execute_DataTable("SELECT * from [" + e.Node.Text + "] limit 100"
                     , connId);
 
                 if (tbl.Rows.Count != 0)
@@ -183,7 +185,7 @@ namespace SQLite_Management_Studio
                     txt_status.Text = obj_sql.WorkerResult.Message;
 
 
-                using (SQLiteDataReader dr = obj_sql.Execute_DataReader($"SELECT * FROM {e.Node.Text} WHERE 1=2",
+                using (SQLiteDataReader dr = obj_sql.Execute_DataReader($"SELECT * FROM [{e.Node.Text}] WHERE 1=2",
                  connId))
                 {
                     dg_struct.DataSource = dr.GetSchemaTable().AsEnumerable()
@@ -245,12 +247,8 @@ namespace SQLite_Management_Studio
 
         private void refreshToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Refreshing this will close all opened connections. Do you want continue", "Refresh", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                tv_connections.Nodes.Clear();
-
-                Connections_Ref();
-            }
+            tv_connections.Nodes.Clear();
+            Connections_Ref();
         }
 
         private void deleteConnectionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -368,6 +366,25 @@ namespace SQLite_Management_Studio
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
+
+        }
+
+        public void NotifyChange(ConnectionChangeType connectionChangeType)
+        {
+            switch (connectionChangeType)
+            {
+                case ConnectionChangeType.Add:
+                    break;
+                case ConnectionChangeType.Connected:
+                    break;
+                case ConnectionChangeType.Disconnected:
+                    break;
+                case ConnectionChangeType.Removed:
+                    Connections_Ref();
+                    break;
+                default:
+                    break;
+            }
 
         }
     }

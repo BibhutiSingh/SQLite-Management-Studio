@@ -3,7 +3,9 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
 using System.Data.SQLite;
+using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 
 namespace SQLite_Management_Studio
@@ -90,34 +92,49 @@ namespace SQLite_Management_Studio
             nodeView.Text = "Views";
             nodeView.Tag = currConnId;
             nodeView.ImageIndex = nodeView.SelectedImageIndex = 2;
-            using (SQLiteDataReader dr = obj_sql.Execute_DataReader("SELECT * FROM sqlite_master WHERE type in ('table','view')",
-                 currConnId))
-            {
-                while (dr.Read())
-                {
-                    TreeNode tbls = new TreeNode();
-                    tbls.Name = dr["type"].ToString().ToUpper();
-                    tbls.Text = dr["name"].ToString();
-                    tbls.Tag = currConnId;
-                    if (dr["type"].ToString().ToUpper() == "TABLE")
-                    {
-                        tbls.ImageIndex = tbls.SelectedImageIndex = 1;
-                        nodeTable.Nodes.Add(tbls);
-                    }
-                    else
-                    {
-                        tbls.ImageIndex = tbls.SelectedImageIndex = 2;
-                        nodeView.Nodes.Add(tbls);
-                    }
 
+            try
+            {
+
+                using (SQLiteDataReader dr = obj_sql.Execute_DataReader(
+                           "SELECT * FROM sqlite_master WHERE type in ('table','view')",
+                           currConnId))
+                {
+                    while (dr.Read())
+                    {
+                        TreeNode tbls = new TreeNode();
+                        tbls.Name = dr["type"].ToString().ToUpper();
+                        tbls.Text = dr["name"].ToString();
+                        tbls.Tag = currConnId;
+                        if (dr["type"].ToString().ToUpper() == "TABLE")
+                        {
+                            tbls.ImageIndex = tbls.SelectedImageIndex = 1;
+                            nodeTable.Nodes.Add(tbls);
+                        }
+                        else
+                        {
+                            tbls.ImageIndex = tbls.SelectedImageIndex = 2;
+                            nodeView.Nodes.Add(tbls);
+                        }
+
+
+                    }
                 }
-            }
+          
 
             curr_node.Nodes.Add(nodeTable);
             curr_node.Nodes.Add(nodeView);
             curr_node.Expand();
             //update connection manager
             connectionManager.ConnectSavedConection(currConnId);
+
+            //throw new NullReferenceException("Test");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK);
+                //Debugger.Break();
+            }
         }
 
         private void testToolStripMenuItem_Click(object sender, EventArgs e)

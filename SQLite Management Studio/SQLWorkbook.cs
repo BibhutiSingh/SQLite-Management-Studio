@@ -1,60 +1,254 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Threading;
-using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using ScintillaNET;
 
 namespace SQLite_Management_Studio
 {
-    public partial class SQLWorkbook : UserControl,IConnectionClient
+    public partial class SQLWorkbook : UserControl, IConnectionClient
     {
+        private readonly SQLWorker sql = new SQLWorker();
 
-        SQLWorker sql = new SQLWorker();
+        private DataTable tbl;
 
-        DataTable tbl = null;
-
-        DataTable tbl_res =new DataTable ();
+        private readonly DataTable tbl_res = new DataTable();
 
 
-        string temp1;
-        string temp2;
-        Thread th;
+        private string temp1;
+        private string temp2;
+        private Thread th;
 
         public SQLWorkbook()
         {
             InitializeComponent();
 
-            DataColumn col1=new DataColumn ("Time");
-            tbl_res .Columns .Add (col1 );
-               DataColumn col2=new DataColumn ("Query");
-            tbl_res .Columns .Add (col2 );
-           
-               DataColumn col3=new DataColumn ("Result");
-            tbl_res .Columns .Add (col3 );
+            var col1 = new DataColumn("Time");
+            tbl_res.Columns.Add(col1);
+            var col2 = new DataColumn("Query");
+            tbl_res.Columns.Add(col2);
+
+            var col3 = new DataColumn("Result");
+            tbl_res.Columns.Add(col3);
             dgres.DataSource = tbl_res;
             Refresh_Connection();
-            
+
             //STYLING
             InitColors();
             InitSyntaxColoring();
 
             // NUMBER MARGIN
             InitNumberMargin();
-
         }
-        #region SyntaxHighlighting        
+
+        public void NotifyChange(ConnectionChangeType connectionChangeType)
+        {
+            switch (connectionChangeType)
+            {
+                case ConnectionChangeType.Add:
+                    break;
+                case ConnectionChangeType.Connected:
+                case ConnectionChangeType.Disconnected:
+                case ConnectionChangeType.Removed:
+                    Refresh_Connection();
+                    break;
+            }
+        }
+
+
+        private void Refresh_Connection()
+        {
+            var conns = ConnectionManagerV2.GetConnectionManager().conn_list
+                .Values
+                .Where(x => x.IsConnectionActive)
+                .ToList();
+            if (conns != null && conns.Count > 0)
+            {
+                cmb_connections.DataSource = conns;
+                cmb_connections.DisplayMember = "Name";
+                cmb_connections.ValueMember = "ID";
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            Refresh_Connection();
+        }
+
+        private void btn_clear_Click(object sender, EventArgs e)
+        {
+            txt.Text = "";
+            dg.DataSource = null;
+        }
+
+        private void btn_run_Click(object sender, EventArgs e)
+        {
+            if (cmb_connections.Text == "" || cmb_connections.Text.Length == 0)
+            {
+                MessageBox.Show("No connection Selected. Please Refresh Connection list.");
+            }
+
+
+            else
+            {
+                dg.DataSource = null;
+                if (txt.SelectedText.Length == 0)
+                    tbl = sql.Execute_DataTable(txt.Text, Convert.ToInt32(cmb_connections.SelectedValue));
+                else
+                    tbl = sql.Execute_DataTable(txt.SelectedText, Convert.ToInt32(cmb_connections.SelectedValue));
+
+
+                dg.DataSource = tbl;
+
+                var dr = tbl_res.NewRow();
+
+                dr[0] = DateTime.Now;
+                if (txt.SelectedText.Length == 0)
+                    dr[1] = txt.Text;
+                else
+                    dr[1] = txt.SelectedText;
+
+
+                dr[2] = sql.WorkerResult.Message;
+
+
+                tbl_res.Rows.Add(dr);
+
+                if (sql.WorkerResult.Result)
+                {
+                    txt_Status.Text = "SUCCESS";
+                    txt_Status.ForeColor = Color.ForestGreen;
+                    tabControl1.SelectedIndex = 0;
+                }
+                else
+                {
+                    txt_Status.Text = "ERROR";
+                    txt_Status.ForeColor = Color.IndianRed;
+                    tabControl1.SelectedIndex = 1;
+                }
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            tbl_res.Clear();
+        }
+
+        private void btn_Export_Click(object sender, EventArgs e)
+        {
+            if (dg.DataSource == null)
+                MessageBox.Show("No Result to export.");
+            else
+                pnl_Export.Visible = true;
+
+            //frm_Export frm = new frm_Export(this);
+            //frm.ShowDialog();
+        }
+
+        private void panel1_Paint(object sender, PaintEventArgs e)
+        {
+        }
+
+        private void UpdateExport(int curr, int tot, string mode)
+        {
+            if (mode == "DONE")
+            {
+                txt_Status.Text = "Result Expoted";
+                prg.Value = 0;
+                th = null;
+            }
+            else
+            {
+                var per = curr / (double)tot;
+                per = Math.Ceiling(per * 100);
+
+                prg.Value = (int)per;
+            }
+        }
+
+        public void Export()
+        {
+            //MessageBox.Show(fln + " " + dlm);
+            //return;
+
+            var wrt = new StreamWriter(temp1, false);
+            dlg_UpdateExport del = UpdateExport;
+
+            var ln = "";
+
+            for (var i = 0; i < dg.RowCount; i++)
+            {
+                ln = "";
+                //Thread.Sleep(1000);
+                for (var j = 0; j < dg.ColumnCount; j++) ln += dg[j, i].Value + temp2;
+                ln = ln.Substring(0, ln.Length - 1);
+
+
+                wrt.WriteLine(ln);
+
+                Invoke(del, i + 1, dg.RowCount, "PROG");
+            }
+
+            wrt.Close();
+            Invoke(del, 4, 4, "DONE");
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            var dlg = new SaveFileDialog();
+            dlg.FileName = "Result.txt";
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+                textBox1.Text = dlg.FileName;
+            else
+                textBox1.Text = "C:\\Result.txt";
+        }
+
+        private void btn_ok_Click(object sender, EventArgs e)
+        {
+            if (textBox3.Text == "")
+            {
+                MessageBox.Show("Give deliminator");
+            }
+            else
+            {
+                temp1 = textBox1.Text;
+                temp2 = textBox3.Text;
+
+                txt_Status.Text = "Exporting Result";
+                th = new Thread(Export);
+                th.Start();
+
+
+                pnl_Export.Visible = false;
+            }
+        }
+
+        private void btn_Cancel_Click(object sender, EventArgs e)
+        {
+            pnl_Export.Visible = false;
+        }
+
+        private void split_Panel1_Paint(object sender, PaintEventArgs e)
+        {
+        }
+
+        private void txt_Click(object sender, EventArgs e)
+        {
+        }
+
+        private delegate void dlg_UpdateExport(int curr, int tot, string mode);
+
+        #region SyntaxHighlighting
+
         private void InitNumberMargin()
         {
-            int BACK_COLOR = 0xCCCCCC;
-            int FORE_COLOR = 0x212121;
-            int NUMBER_MARGIN = 1;
+            var BACK_COLOR = 0xCCCCCC;
+            var FORE_COLOR = 0x212121;
+            var NUMBER_MARGIN = 1;
             txt.Styles[Style.LineNumber].BackColor = IntToColor(BACK_COLOR);
             txt.Styles[Style.LineNumber].ForeColor = IntToColor(FORE_COLOR);
             txt.Styles[Style.IndentGuide].ForeColor = IntToColor(FORE_COLOR);
@@ -66,6 +260,7 @@ namespace SQLite_Management_Studio
             nums.Sensitive = true;
             nums.Mask = 0;
         }
+
         private void InitSyntaxColoring()
         {
             // Configure the default style
@@ -95,244 +290,18 @@ namespace SQLite_Management_Studio
 
             txt.SetKeywords(0, "select from where group by having delete update insert values into");
             txt.SetKeywords(1, "* desc set rownum top min max avg count");
-
         }
+
         private void InitColors()
         {
             txt.SetSelectionBackColor(true, IntToColor(0x114D9C));
         }
+
         public static Color IntToColor(int rgb)
         {
             return Color.FromArgb(255, (byte)(rgb >> 16), (byte)(rgb >> 8), (byte)rgb);
         }
+
         #endregion
-
-
-        void Refresh_Connection()
-        {
-            var conns = ConnectionManagerV2.GetConnectionManager().conn_list
-                .Values
-                .Where(x => x.IsConnectionActive)
-                .ToList();
-            if (conns != null && conns.Count>0)
-            {
-                cmb_connections.DataSource = conns;
-            cmb_connections.DisplayMember = "Name";
-                cmb_connections.ValueMember = "ID";
-            }
-            
-        }
-
-        private void button2_Click(object sender, EventArgs e)
-        {
-            Refresh_Connection();
-        }
-
-        private void btn_clear_Click(object sender, EventArgs e)
-        {
-            txt.Text = "";
-            dg.DataSource = null;
-        }
-
-        private void btn_run_Click(object sender, EventArgs e)
-        {
-            if (cmb_connections.Text == "" || cmb_connections.Text.Length == 0 )
-                MessageBox.Show("No connection Selected. Please Refresh Connection list.");
-
-                
-            else
-            {
-                dg.DataSource = null;
-                if(txt.SelectedText.Length==0)
-                    tbl = sql.Execute_DataTable(txt.Text, Convert.ToInt32( cmb_connections.SelectedValue));
-                else
-                    tbl = sql.Execute_DataTable(txt.SelectedText, Convert.ToInt32(cmb_connections.SelectedValue));
-
-
-                
-
-                dg.DataSource = tbl;
-
-                DataRow dr = tbl_res.NewRow();
-
-                dr[0] = DateTime.Now;
-                if (txt.SelectedText.Length == 0)
-                    dr[1] = txt.Text;
-                else
-                    dr[1] = txt.SelectedText ;
-
-                
-                dr[2] = sql.WorkerResult.Message;
-
-
-                tbl_res.Rows.Add(dr);
-
-                if (sql.WorkerResult.Result)
-                {
-                    txt_Status.Text = "SUCCESS";
-                    txt_Status.ForeColor = Color.ForestGreen;
-                    tabControl1.SelectedIndex = 0;
-
-                }
-                else
-                {
-                    txt_Status.Text = "ERROR";
-                    txt_Status.ForeColor = Color.IndianRed;
-                    tabControl1.SelectedIndex = 1;
-                   
- 
-                }
-            
-            }
-
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            tbl_res.Clear();
-        }
-
-        private void btn_Export_Click(object sender, EventArgs e)
-        {
-            if (dg.DataSource == null)
-                MessageBox.Show("No Result to export.");
-            else
-            {
-            pnl_Export.Visible = true;
-
-            }
-
-            //frm_Export frm = new frm_Export(this);
-            //frm.ShowDialog();
-        }
-
-        private void panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-
-        private delegate void dlg_UpdateExport(int curr,int tot, string mode);
-
-        private void UpdateExport(int curr, int tot, string mode)
-        {
-            if (mode.ToString() == "DONE")
-            {
-                txt_Status.Text = "Result Expoted";
-                prg.Value = 0;
-                th = null;
-            }
-            else
-            {
-                double per = (double)curr / (double)tot;
-                per = Math.Ceiling(per * 100);
-
-                prg.Value =(int) per;
-                
-            }
-
-
-        }
-
-        public void Export()
-        {
-            //MessageBox.Show(fln + " " + dlm);
-            //return;
-
-            StreamWriter wrt = new StreamWriter(temp1 , false);
-            dlg_UpdateExport del = new dlg_UpdateExport(UpdateExport);
-
-            string ln = "";
-
-            for (int i = 0; i < dg.RowCount; i++)
-            {
-                ln = "";
-                //Thread.Sleep(1000);
-                for (int j = 0; j < dg.ColumnCount; j++)
-                {
-                    ln += dg[j, i].Value.ToString()+ temp2;
-                    
-                   
-
-                    
- 
-                }
-                ln = ln.Substring(0, ln.Length - 1);
-
-                
-
-                wrt.WriteLine(ln);
-                
-                this .Invoke (del,new object[]{(i+1),dg.RowCount ,"PROG"});
-
-            }
-
-            wrt.Close();
-            this.Invoke(del, new object[] {4, 4, "DONE"});
-
-        }
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-
-            SaveFileDialog dlg = new SaveFileDialog();
-            dlg.FileName = "Result.txt";
-
-            if (dlg.ShowDialog() == DialogResult.OK)
-                textBox1.Text = dlg.FileName;
-            else
-                textBox1.Text = "C:\\Result.txt";
-        }
-
-        private void btn_ok_Click(object sender, EventArgs e)
-        {
-            if (textBox3.Text == "")
-                MessageBox.Show("Give deliminator");
-            else
-            {
-                temp1 = textBox1.Text;
-                temp2 = textBox3.Text;
-
-                txt_Status.Text = "Exporting Result";
-             th = new Thread(new ThreadStart(Export));
-                th.Start();
-
-
-              
-                pnl_Export.Visible = false;
-            }
-
-
-         
-        }
-
-        private void btn_Cancel_Click(object sender, EventArgs e)
-        {
-            pnl_Export.Visible = false;
-        }
-
-        private void split_Panel1_Paint(object sender, PaintEventArgs e)
-        {
-
-        }
-        private void txt_Click(object sender, EventArgs e)
-        {
-
-        }
-
-        public void NotifyChange(ConnectionChangeType connectionChangeType)
-        {
-            switch (connectionChangeType)
-            {
-                case ConnectionChangeType.Add:
-                    break;
-                case ConnectionChangeType.Connected:
-                case ConnectionChangeType.Disconnected:
-                case ConnectionChangeType.Removed:
-                    Refresh_Connection();
-                    break;
-                default:
-                    break;
-            }
-        }
     }
 }

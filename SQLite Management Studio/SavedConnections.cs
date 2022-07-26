@@ -1,9 +1,6 @@
-﻿
-using System;
-using System.Collections.Generic;
+﻿using System;
+using System.Data;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
 
 namespace SQLite_Management_Studio
 {
@@ -11,8 +8,11 @@ namespace SQLite_Management_Studio
     {
         private string nm;
         private string pth;
+
         public SavedConnections()
-        { }
+        {
+        }
+
         public SavedConnections(string nm, string pth)
         {
             this.nm = nm;
@@ -25,47 +25,31 @@ namespace SQLite_Management_Studio
         public string Password { get; set; }
         public bool IsConnectionActive { get; set; }
         private SQLiteConnection ActiveConnection { get; set; }
-        public SQLiteConnection GetActiveConnection()
-        {
-            try
-            {
-                if (ActiveConnection == null)
-                {
-                    ActiveConnection = new SQLiteConnection($"Data Source={this.Path}");
-                    ActiveConnection.StateChange += ActiveConnection_StateChange;
-                    ActiveConnection.Open();
-                }
-                if (ActiveConnection.State != System.Data.ConnectionState.Open)
-                {
-                    ActiveConnection.Open();
-                }
-                return ActiveConnection;
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-        }
-        private void ActiveConnection_StateChange(object sender, System.Data.StateChangeEventArgs e)
-        {
-            if (ActiveConnection.State == System.Data.ConnectionState.Open)
-            {
-                this.IsConnectionActive = true;
-            }
-            else
-            {
-                this.IsConnectionActive = false;
-            }
-        }
 
         public void Dispose()
         {
-            if (ActiveConnection != null)
+            if (ActiveConnection != null) ActiveConnection.Close();
+        }
+
+        public SQLiteConnection GetActiveConnection()
+        {
+            if (ActiveConnection == null)
             {
-                ActiveConnection.Close();
+                ActiveConnection = new SQLiteConnection($"Data Source={Path}");
+                ActiveConnection.StateChange += ActiveConnection_StateChange;
+                ActiveConnection.Open();
             }
+
+            if (ActiveConnection.State != ConnectionState.Open) ActiveConnection.Open();
+            return ActiveConnection;
+        }
+
+        private void ActiveConnection_StateChange(object sender, StateChangeEventArgs e)
+        {
+            if (ActiveConnection.State == ConnectionState.Open)
+                IsConnectionActive = true;
+            else
+                IsConnectionActive = false;
         }
     }
 }

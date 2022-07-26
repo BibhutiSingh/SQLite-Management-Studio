@@ -1,174 +1,134 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SQLite;
-using System.Linq;
-using System.Text;
 
 namespace SQLite_Management_Studio
 {
     public class ConnectionManagerV2
     {
-        private List<IConnectionClient> clients;
-        public Dictionary<int, SavedConnections> conn_list = new Dictionary<int, SavedConnections>();
         private const string ConfigDb = "Config.db";
         private const string ConfigTable = "ConnectionMaster";
+        private static ConnectionManagerV2 connectionManager;
+        private readonly List<IConnectionClient> clients;
+        public Dictionary<int, SavedConnections> conn_list = new Dictionary<int, SavedConnections>();
+
         private ConnectionManagerV2()
         {
             clients = new List<IConnectionClient>();
             RefreshAllSavedConnections();
         }
-        private static ConnectionManagerV2 connectionManager = null;
+
         public static ConnectionManagerV2 GetConnectionManager()
         {
-            if (connectionManager == null)
-            {
-                connectionManager = new ConnectionManagerV2();
-            }
+            if (connectionManager == null) connectionManager = new ConnectionManagerV2();
             return connectionManager;
         }
+
         public void Register(IConnectionClient connectionClient)
         {
             clients.Add(connectionClient);
         }
+
         public void UnRegister(IConnectionClient connectionClient)
         {
             clients.Remove(connectionClient);
         }
+
         private void NotifyAll(ConnectionChangeType connectionChangeType)
         {
             //Refresh Connections
             RefreshAllSavedConnections();
-            foreach (var item in clients)
-            {
-                item.NotifyChange(connectionChangeType);
-            }
+            foreach (var item in clients) item.NotifyChange(connectionChangeType);
         }
+
         #region ConnectionConfig
+
         private SQLiteConnection GetConfigConnection()
         {
-            try
-            {
-                
-               SQLiteConnection ConfigConnection = new SQLiteConnection($"Data Source = {ConfigDb}");
-               ConfigConnection.Open();         
-                
-                //check if ConfigDb is ok
-                SQLiteCommand com = new SQLiteCommand(ConfigConnection);
-                com.CommandText = $"select count(*) from sqlite_master where type='table' and name ='{ConfigTable}'";
-                int res = Convert.ToInt32(com.ExecuteScalar());
-                if (res==0)
-                {
-                    com.CommandText = $"CREATE TABLE {ConfigTable} (ID INTEGER NOT NULL CONSTRAINT \"PK_Users\" PRIMARY KEY AUTOINCREMENT,NAME TEXT NOT NULL, PATH TEXT NOT NULL, PASSWORD TEXT)";
-                    com.ExecuteNonQuery();
-                }
-                return ConfigConnection;
-            }
-            catch (Exception)
-            {
+            var ConfigConnection = new SQLiteConnection($"Data Source = {ConfigDb}");
+            ConfigConnection.Open();
 
-                throw;
+            //check if ConfigDb is ok
+            var com = new SQLiteCommand(ConfigConnection);
+            com.CommandText = $"select count(*) from sqlite_master where type='table' and name ='{ConfigTable}'";
+            var res = Convert.ToInt32(com.ExecuteScalar());
+            if (res == 0)
+            {
+                com.CommandText =
+                    $"CREATE TABLE {ConfigTable} (ID INTEGER NOT NULL CONSTRAINT \"PK_Users\" PRIMARY KEY AUTOINCREMENT,NAME TEXT NOT NULL, PATH TEXT NOT NULL, PASSWORD TEXT)";
+                com.ExecuteNonQuery();
             }
 
-
+            return ConfigConnection;
         }
+
         #endregion
+
         private void RefreshAllSavedConnections()
         {
-            try
+            using (var connConfig = GetConfigConnection())
             {
-                using (var connConfig = GetConfigConnection())
+                var comm = connConfig.CreateCommand();
+                comm.CommandText = "SELECT * FROM " + ConfigTable;
+                var lstIds = new List<int>();
+                using (var rd = comm.ExecuteReader())
                 {
-                    var comm = connConfig.CreateCommand();
-                    comm.CommandText = "SELECT * FROM " + ConfigTable;
-                    List<int> lstIds = new List<int>();
-                    using (var rd = comm.ExecuteReader())
+                    while (rd.Read())
                     {
-                        while (rd.Read())
+                        var obj = new SavedConnections
                         {
-                            var obj = new SavedConnections()
-                            {
-                                ID = Convert.ToInt32(rd[0]),
-                                Name = rd["NAME"].ToString(),
-                                Path = rd["PATH"].ToString(),
-                                Password = rd["PASSWORD"].ToString(),
-                                IsConnectionActive = false
-                            };
+                            ID = Convert.ToInt32(rd[0]),
+                            Name = rd["NAME"].ToString(),
+                            Path = rd["PATH"].ToString(),
+                            Password = rd["PASSWORD"].ToString(),
+                            IsConnectionActive = false
+                        };
 
-                            //Refresh Connection without closing existing connection
-                            if (!conn_list.ContainsKey(obj.ID))
-                            {
-                                conn_list.Add(obj.ID, obj);
-                            }
-                            lstIds.Add(obj.ID);
-                        }
+                        //Refresh Connection without closing existing connection
+                        if (!conn_list.ContainsKey(obj.ID)) conn_list.Add(obj.ID, obj);
+                        lstIds.Add(obj.ID);
                     }
                 }
             }
-            catch (Exception)
-            {
-
-                throw;
-            }
         }
+
         public void SaveConnection(string nm, string pth)
         {
-            try
+            var savedConnection = new SavedConnections(nm, pth);
+            using (var connConfig = GetConfigConnection())
             {
-                var savedConnection = new SavedConnections(nm, pth);
-                using (var connConfig = GetConfigConnection())
-                {
-                    string query = string.Format("INSERT INTO {0}(NAME,PATH) values ('{1}','{2}')", ConfigTable, nm, pth);
-                    new SQLiteCommand(query, connConfig).ExecuteNonQuery();
-                }
-                NotifyAll(ConnectionChangeType.Add);
+                var query = string.Format("INSERT INTO {0}(NAME,PATH) values ('{1}','{2}')", ConfigTable, nm, pth);
+                new SQLiteCommand(query, connConfig).ExecuteNonQuery();
             }
-            catch (Exception)
-            {
 
-                throw;
-            }
+            NotifyAll(ConnectionChangeType.Add);
         }
+
         public bool ConnectSavedConection(int Id)
         {
-            if (conn_list.ContainsKey(Id) && !conn_list[Id].IsConnectionActive)
-            {
-                conn_list[Id].GetActiveConnection();
-                
-            }
+            if (conn_list.ContainsKey(Id) && !conn_list[Id].IsConnectionActive) conn_list[Id].GetActiveConnection();
             NotifyAll(ConnectionChangeType.Connected);
             return conn_list[Id].IsConnectionActive;
         }
+
         public void RemoveConnection(int Id)
         {
             using (var connConfig = GetConfigConnection())
             {
-                string query = string.Format("DELETE FROM {0} WHERE ID={1}", ConfigTable, Id);
+                var query = string.Format("DELETE FROM {0} WHERE ID={1}", ConfigTable, Id);
                 new SQLiteCommand(query, connConfig).ExecuteNonQuery();
                 NotifyAll(ConnectionChangeType.Removed);
             }
         }
+
         public SavedConnections GetConnection(int Id)
         {
-            try
-            {
-                if (conn_list.ContainsKey(Id))
-                {
-                    return conn_list[Id];
-                }
-                else
-                {
-                    throw new Exception("No connection found.");
-                }
-            }
-            catch (Exception)
-            {
-
-                throw;
-            }
-
-
+            if (conn_list.ContainsKey(Id))
+                return conn_list[Id];
+            throw new Exception("No connection found.");
         }
     }
+
     public enum ConnectionChangeType
     {
         Add,
@@ -176,9 +136,9 @@ namespace SQLite_Management_Studio
         Disconnected,
         Removed
     }
+
     public interface IConnectionClient
     {
         void NotifyChange(ConnectionChangeType connectionChangeType);
-
     }
 }

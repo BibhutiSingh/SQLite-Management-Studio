@@ -1,28 +1,24 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Drawing;
+using System.IO;
+using System.Windows.Forms;
 
 namespace SQLite_Management_Studio
 {
     public partial class frmNewTable : Form
     {
+        public SQLiteConnection conn;
 
-       public  SQLiteConnection conn;
-       
+        private SQLWorker obj_sql;
+        private bool opr_flag = false;
 
-        string tmp_str1;
-        string tmp_str2;
+        private string opr_msg = "";
 
-        string opr_msg = "";
-        bool opr_flag = false;
 
-        SQLWorker obj_sql;
+        private string tmp_str1;
+        private string tmp_str2;
+
         public frmNewTable()
         {
             InitializeComponent();
@@ -31,25 +27,22 @@ namespace SQLite_Management_Studio
 
         private void button1_Click(object sender, EventArgs e)
         {
-            OpenFileDialog opd = new OpenFileDialog();
+            var opd = new OpenFileDialog();
             opd.CheckFileExists = false;
 
-            if (opd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (opd.ShowDialog() == DialogResult.OK)
             {
                 textBox1.Text = opd.FileName;
 
-                if (System.IO.File.Exists(textBox1.Text) == false)
+                if (File.Exists(textBox1.Text) == false)
                 {
-                    if (MessageBox.Show("File Doesn't exists. Do you want to create the file?", "Create file", MessageBoxButtons.YesNo) == System.Windows.Forms.DialogResult.Yes)
+                    if (MessageBox.Show("File Doesn't exists. Do you want to create the file?", "Create file",
+                            MessageBoxButtons.YesNo) == DialogResult.Yes)
                         //System.IO.File.Create(textBox1.Text);
                         SQLiteConnection.CreateFile(textBox1.Text);
                     else
                         textBox1.Text = string.Empty;
-
-
                 }
-
-
             }
             else
             {
@@ -58,12 +51,11 @@ namespace SQLite_Management_Studio
         }
 
 
-
-        public  void button4_Click(object sender, EventArgs e)
+        public void button4_Click(object sender, EventArgs e)
         {
-            if ((textBox1.Text.Length != 0) && (textBox1.Text != string.Empty))
+            if (textBox1.Text.Length != 0 && textBox1.Text != string.Empty)
             {
-                conn = new SQLiteConnection("Data Source="+textBox1.Text);
+                conn = new SQLiteConnection("Data Source=" + textBox1.Text);
                 try
                 {
                     conn.Open();
@@ -74,11 +66,10 @@ namespace SQLite_Management_Studio
                     MessageBox.Show("Error in connection: " + ex.Message);
                     lblstatus.Text = "Status: Not Connected";
                 }
-            
             }
         }
 
-  
+
         private void button3_Click(object sender, EventArgs e)
         {
             if (check_integrity() == false)
@@ -87,7 +78,7 @@ namespace SQLite_Management_Studio
                 return;
             }
 
-            tmp_str2 = "create table " + txt_tbl .Text .Trim () + " ( ";
+            tmp_str2 = "create table " + txt_tbl.Text.Trim() + " ( ";
 
             foreach (DataGridViewRow rw in dg.Rows)
             {
@@ -95,22 +86,22 @@ namespace SQLite_Management_Studio
                     break;
 
                 if (rw.Cells[1].Value.ToString() == "VARCHAR" || rw.Cells[1].Value.ToString() == "NUMERIC")
-                    tmp_str2 = tmp_str2 + rw.Cells[0].Value.ToString() + " " + rw.Cells[1].Value.ToString() + "(" + rw.Cells[2].Value.ToString() + ")";
-                else if(rw.Cells[1].Value.ToString() == "DECIMAL")
-                    tmp_str2 = tmp_str2 + rw.Cells[0].Value.ToString() + " " + rw.Cells[1].Value.ToString() + "(" + rw.Cells[3].Value.ToString() + "," +rw.Cells[4].Value.ToString() + ")";
+                    tmp_str2 = tmp_str2 + rw.Cells[0].Value + " " + rw.Cells[1].Value + "(" + rw.Cells[2].Value + ")";
+                else if (rw.Cells[1].Value.ToString() == "DECIMAL")
+                    tmp_str2 = tmp_str2 + rw.Cells[0].Value + " " + rw.Cells[1].Value + "(" + rw.Cells[3].Value + "," +
+                               rw.Cells[4].Value + ")";
                 else
-                    tmp_str2 = tmp_str2 + rw.Cells[0].Value.ToString() + " " + rw.Cells[1].Value.ToString() ;
+                    tmp_str2 = tmp_str2 + rw.Cells[0].Value + " " + rw.Cells[1].Value;
 
 
-                if (rw.Cells[6].Value != null )
-                    tmp_str2 = tmp_str2 + " " + rw.Cells[6].Value.ToString() + ",";
+                if (rw.Cells[6].Value != null)
+                    tmp_str2 = tmp_str2 + " " + rw.Cells[6].Value + ",";
                 else
                     tmp_str2 = tmp_str2 + ",";
-
             }
-            
 
-            tmp_str1 = tmp_str2.Remove(tmp_str2.Length-1) + ")";
+
+            tmp_str1 = tmp_str2.Remove(tmp_str2.Length - 1) + ")";
 
             //obj_sql.Execute_Query(tmp_str1, conn);
 
@@ -126,7 +117,7 @@ namespace SQLite_Management_Studio
         }
 
         private void dg_CellValueChanged(object sender, DataGridViewCellEventArgs e)
-        {   
+        {
             if (e.RowIndex < 0 || e.ColumnIndex < 0)
                 return;
 
@@ -134,12 +125,12 @@ namespace SQLite_Management_Studio
 
             if (e.ColumnIndex == 1)
             {
-                string vals = dg.Rows[e.RowIndex].Cells[1].Value.ToString();
+                var vals = dg.Rows[e.RowIndex].Cells[1].Value.ToString();
                 switch (vals)
                 {
                     case "VARCHAR":
                         dg.Rows[e.RowIndex].Cells[2].Value = "20";
-                        dg.Rows[e.RowIndex].Cells[3].ReadOnly= true;
+                        dg.Rows[e.RowIndex].Cells[3].ReadOnly = true;
                         dg.Rows[e.RowIndex].Cells[4].ReadOnly = true;
                         break;
 
@@ -153,21 +144,16 @@ namespace SQLite_Management_Studio
                     case "DECIMAL":
                         dg.Rows[e.RowIndex].Cells[2].ReadOnly = true;
                         dg.Rows[e.RowIndex].Cells[2].Value = "";
-                        dg.Rows[e.RowIndex].Cells[3].Value  = "10";
+                        dg.Rows[e.RowIndex].Cells[3].Value = "10";
                         dg.Rows[e.RowIndex].Cells[4].Value = "2";
                         break;
                     default:
-                              dg.Rows[e.RowIndex].Cells[2].ReadOnly = true;
+                        dg.Rows[e.RowIndex].Cells[2].ReadOnly = true;
                         dg.Rows[e.RowIndex].Cells[3].ReadOnly = true;
                         dg.Rows[e.RowIndex].Cells[4].ReadOnly = true;
                         dg.Rows[e.RowIndex].Cells[2].Value = "";
                         break;
-
-
                 }
-                    
-
-
             }
 
             dg.Refresh();
@@ -176,12 +162,13 @@ namespace SQLite_Management_Studio
 
         private bool check_integrity()
         {
-            bool res = true;
+            var res = true;
             if (txt_tbl.Text == string.Empty || txt_tbl.Text.Length == 0)
             {
                 opr_msg = "Table name can not be empty.";
 
-                return false; }
+                return false;
+            }
 
             if (lblstatus.Text.ToUpper() != "STATUS: CONNECTED")
             {
@@ -195,7 +182,7 @@ namespace SQLite_Management_Studio
                 return false;
             }
 
-           // MessageBox.Show(dg.Rows.Count.ToString ());
+            // MessageBox.Show(dg.Rows.Count.ToString ());
 
             foreach (DataGridViewRow rw in dg.Rows)
             {
@@ -208,42 +195,40 @@ namespace SQLite_Management_Studio
                     opr_msg = "Correct highlighted errors.";
                     rw.Cells[0].Style.BackColor = Color.DarkSalmon;
                     res = false;
-
                 }
 
 
                 rw.Cells[2].Style.BackColor = Color.White;
-                if ((rw.Cells[1].Value.ToString() == "VARCHAR" || rw.Cells[1].Value.ToString() == "NUMERIC") && (rw.Cells[2].Value == null || rw.Cells[2].Value.ToString() == string.Empty))
+                if ((rw.Cells[1].Value.ToString() == "VARCHAR" || rw.Cells[1].Value.ToString() == "NUMERIC") &&
+                    (rw.Cells[2].Value == null || rw.Cells[2].Value.ToString() == string.Empty))
                 {
                     opr_msg = "Correct highlighted errors.";
                     rw.Cells[2].Style.BackColor = Color.DarkSalmon;
                     res = false;
-
                 }
 
 
                 rw.Cells[3].Style.BackColor = Color.White;
-                if ((rw.Cells[1].Value.ToString() == "DECIMAL") && (rw.Cells[3].Value == null || rw.Cells[3].Value.ToString() == string.Empty))
+                if (rw.Cells[1].Value.ToString() == "DECIMAL" &&
+                    (rw.Cells[3].Value == null || rw.Cells[3].Value.ToString() == string.Empty))
                 {
                     opr_msg = "Correct highlighted errors.";
                     rw.Cells[3].Style.BackColor = Color.DarkSalmon;
                     res = false;
-
                 }
 
 
                 rw.Cells[4].Style.BackColor = Color.White;
-                if ((rw.Cells[1].Value.ToString() == "DECIMAL") && (rw.Cells[4].Value == null || rw.Cells[4].Value.ToString() == string.Empty))
+                if (rw.Cells[1].Value.ToString() == "DECIMAL" &&
+                    (rw.Cells[4].Value == null || rw.Cells[4].Value.ToString() == string.Empty))
                 {
                     opr_msg = "Correct highlighted errors.";
                     rw.Cells[4].Style.BackColor = Color.DarkSalmon;
                     res = false;
-
                 }
             }
 
-            
-                
+
             return res;
         }
 
@@ -259,25 +244,21 @@ namespace SQLite_Management_Studio
 
         private void dg_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
 
 
-
-        public void set_connection(SQLiteConnection cn,string pth="CONNECTION PATH")
+        public void set_connection(SQLiteConnection cn, string pth = "CONNECTION PATH")
         {
             textBox1.Text = pth;
-          textBox1.Enabled = false;
-            
+            textBox1.Enabled = false;
+
             conn = cn;
             lblstatus.Text = "Status: Connected";
         }
-
-       
     }
 }

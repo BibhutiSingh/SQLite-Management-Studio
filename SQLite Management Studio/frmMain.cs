@@ -1,29 +1,24 @@
 ﻿using System;
-using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Data;
-using System.Data.SQLite;
-using System.Diagnostics;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Windows.Forms;
 
 namespace SQLite_Management_Studio
 {
-
     public partial class frmMain : Form, IConnectionClient
     {
-        frmNewTable frm;
+        private readonly ConnectionManagerV2 connectionManager;
 
-        test frm_test;
+        private TreeNode curr_node;
+        private frmNewTable frm;
 
-        SQLWorker obj_sql;
+        private test frm_test;
 
-        TreeNode curr_node = null;
-        TreeNode tmp_node = null;
+        private readonly SQLWorker obj_sql;
 
-        DataTable tbl = null;
-        ConnectionManagerV2 connectionManager;
+        private DataTable tbl;
+        private TreeNode tmp_node = null;
 
         public frmMain()
         {
@@ -32,6 +27,23 @@ namespace SQLite_Management_Studio
             connectionManager = ConnectionManagerV2.GetConnectionManager();
             connectionManager.Register(this);
         }
+
+        public void NotifyChange(ConnectionChangeType connectionChangeType)
+        {
+            switch (connectionChangeType)
+            {
+                case ConnectionChangeType.Add:
+                    break;
+                case ConnectionChangeType.Connected:
+                    break;
+                case ConnectionChangeType.Disconnected:
+                    break;
+                case ConnectionChangeType.Removed:
+                    Connections_Ref();
+                    break;
+            }
+        }
+
         private void ConnectionAdd_Click(object sender, EventArgs e)
         {
             frm = new frmNewTable();
@@ -40,10 +52,9 @@ namespace SQLite_Management_Studio
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-
             Connections_Ref();
-            tv_connections.ImageList = this.imgList;
-            SQLWorkbook sq = new SQLWorkbook();
+            tv_connections.ImageList = imgList;
+            var sq = new SQLWorkbook();
             sq.Size = tabPage1.Size;
             tabPage1.Controls.Add(sq);
             connectionManager.Register(sq);
@@ -52,7 +63,7 @@ namespace SQLite_Management_Studio
         private void Connections_Ref()
         {
             tv_connections.Nodes.Clear();
-           TreeNode conns = new TreeNode();
+            var conns = new TreeNode();
             conns.Name = "CONN";
             conns.Text = "Connections";
             conns.Tag = "CONN";
@@ -62,32 +73,30 @@ namespace SQLite_Management_Studio
 
             foreach (var item in connectionManager.conn_list.Values)
             {
-                TreeNode main_nodes = new TreeNode();
+                var main_nodes = new TreeNode();
                 main_nodes.Name = "PATH";
                 main_nodes.Text = item.Name;
                 main_nodes.ToolTipText = item.Path;
                 main_nodes.Tag = item.ID;
                 conns.ImageIndex = conns.SelectedImageIndex = 0;
                 tv_connections.Nodes["CONN"].Nodes.Add(main_nodes);
-                if (item.IsConnectionActive)
-                {
-                    tv_connections.Nodes["CONN"].LastNode.Expand();
-                }
+                if (item.IsConnectionActive) tv_connections.Nodes["CONN"].LastNode.Expand();
             }
 
             conns.Expand();
         }
+
         private void RefreshConnectionTree()
         {
             curr_node.Nodes.Clear();
-            int currConnId = Convert.ToInt32(curr_node.Tag);
-            TreeNode nodeTable = new TreeNode();
+            var currConnId = Convert.ToInt32(curr_node.Tag);
+            var nodeTable = new TreeNode();
             nodeTable.Name = "OBJ";
             nodeTable.Text = "Tables";
             nodeTable.Tag = currConnId;
             nodeTable.ImageIndex = nodeTable.SelectedImageIndex = 1;
 
-            TreeNode nodeView = new TreeNode();
+            var nodeView = new TreeNode();
             nodeView.Name = "OBJ";
             nodeView.Text = "Views";
             nodeView.Tag = currConnId;
@@ -95,14 +104,13 @@ namespace SQLite_Management_Studio
 
             try
             {
-
-                using (SQLiteDataReader dr = obj_sql.Execute_DataReader(
+                using (var dr = obj_sql.Execute_DataReader(
                            "SELECT * FROM sqlite_master WHERE type in ('table','view')",
                            currConnId))
                 {
                     while (dr.Read())
                     {
-                        TreeNode tbls = new TreeNode();
+                        var tbls = new TreeNode();
                         tbls.Name = dr["type"].ToString().ToUpper();
                         tbls.Text = dr["name"].ToString();
                         tbls.Tag = currConnId;
@@ -116,19 +124,17 @@ namespace SQLite_Management_Studio
                             tbls.ImageIndex = tbls.SelectedImageIndex = 2;
                             nodeView.Nodes.Add(tbls);
                         }
-
-
                     }
                 }
-          
 
-            curr_node.Nodes.Add(nodeTable);
-            curr_node.Nodes.Add(nodeView);
-            curr_node.Expand();
-            //update connection manager
-            connectionManager.ConnectSavedConection(currConnId);
 
-            //throw new NullReferenceException("Test");
+                curr_node.Nodes.Add(nodeTable);
+                curr_node.Nodes.Add(nodeView);
+                curr_node.Expand();
+                //update connection manager
+                connectionManager.ConnectSavedConection(currConnId);
+
+                //throw new NullReferenceException("Test");
             }
             catch (Exception ex)
             {
@@ -145,7 +151,6 @@ namespace SQLite_Management_Studio
 
         private void tv_connections_AfterSelect(object sender, TreeViewEventArgs e)
         {
-
         }
 
         private void tv_connections_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
@@ -154,7 +159,6 @@ namespace SQLite_Management_Studio
             {
                 if (e.Node.Name == "PATH")
                 {
-
                     e.Node.ContextMenuStrip = menu_connect;
                     curr_node = e.Node;
                     //menu_connect.Show();
@@ -163,7 +167,6 @@ namespace SQLite_Management_Studio
                 {
                     e.Node.ContextMenuStrip = menu_connection;
                     curr_node = e.Node;
-
                 }
 
                 else if (e.Node.Name == "TABLE")
@@ -183,9 +186,11 @@ namespace SQLite_Management_Studio
                 dg_data.DataSource = null;
 
                 tbl = obj_sql.Execute_DataTable("SELECT sql FROM sqlite_master WHERE  tbl_name='"
-                    + e.Node.Text + "'", connId);
+                                                + e.Node.Text + "'", connId);
                 if (tbl.Rows.Count != 0)
+                {
                     txt_query.Text = tbl.Rows[0][0].ToString();
+                }
                 else
                 {
                     txt_status.Text = obj_sql.WorkerResult.Message;
@@ -202,8 +207,8 @@ namespace SQLite_Management_Studio
                     txt_status.Text = obj_sql.WorkerResult.Message;
 
 
-                using (SQLiteDataReader dr = obj_sql.Execute_DataReader($"SELECT * FROM [{e.Node.Text}] WHERE 1=2",
-                 connId))
+                using (var dr = obj_sql.Execute_DataReader($"SELECT * FROM [{e.Node.Text}] WHERE 1=2",
+                           connId))
                 {
                     dg_struct.DataSource = dr.GetSchemaTable().AsEnumerable()
                         .Select(x => new
@@ -215,11 +220,8 @@ namespace SQLite_Management_Studio
                             IsKey = x.Field<bool>("IsKey"),
                             IsAutoIncrement = x.Field<bool>("IsAutoIncrement")
                         }).ToList();
-
                 }
-
             }
-
         }
 
         private void connectToolStripMenuItem_Click(object sender, EventArgs e)
@@ -235,12 +237,11 @@ namespace SQLite_Management_Studio
         private void tablesToolStripMenuItem_Click(object sender, EventArgs e)
         {
             //New Table
-
         }
 
         private void addConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            frm_AddConnection frm = new frm_AddConnection();
+            var frm = new frm_AddConnection();
 
             frm.ShowDialog();
         }
@@ -252,14 +253,13 @@ namespace SQLite_Management_Studio
 
         private void toolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            frm_AddConnection frm = new frm_AddConnection();
+            var frm = new frm_AddConnection();
 
             frm.ShowDialog();
         }
 
         private void menu_connection_Opening(object sender, CancelEventArgs e)
         {
-
         }
 
         private void refreshToolStripMenuItem1_Click(object sender, EventArgs e)
@@ -270,9 +270,10 @@ namespace SQLite_Management_Studio
 
         private void deleteConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure to delete this connection", "Delete Connection", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure to delete this connection", "Delete Connection",
+                    MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                int currConnId = Convert.ToInt32(curr_node.Tag);
+                var currConnId = Convert.ToInt32(curr_node.Tag);
                 connectionManager.RemoveConnection(currConnId);
                 RefreshConnectionTree();
             }
@@ -280,17 +281,17 @@ namespace SQLite_Management_Studio
 
         private void tb_SelectedIndexChanged(object sender, EventArgs e)
         {
-            TabPage pg = tb.SelectedTab;
+            var pg = tb.SelectedTab;
 
             if (pg.Name != "tb_Add")
                 return;
 
-            TabPage pg_new = new TabPage();
+            var pg_new = new TabPage();
 
-            pg_new.Text = "Editor " + (tb.TabCount - 1).ToString();
+            pg_new.Text = "Editor " + (tb.TabCount - 1);
             pg_new.Size = tb.Size;
 
-            SQLWorkbook sq = new SQLWorkbook();
+            var sq = new SQLWorkbook();
             connectionManager.Register(sq);
             sq.Size = pg_new.Size;
 
@@ -302,28 +303,25 @@ namespace SQLite_Management_Studio
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure to close to all Editors?", "Close Tab", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure to close to all Editors?", "Close Tab", MessageBoxButtons.YesNo) ==
+                DialogResult.Yes)
             {
                 foreach (TabPage pg in tb.TabPages)
-                {
                     if (pg.Name != "tb_Struct" && pg.Name != "tb_Add")
                         tb.TabPages.Remove(pg);
-                }
 
                 tb.SelectedIndex = 0;
             }
-
-
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            TabPage pg_new = new TabPage();
+            var pg_new = new TabPage();
 
-            pg_new.Text = "Editor " + (tb.TabCount - 1).ToString();
+            pg_new.Text = "Editor " + (tb.TabCount - 1);
             pg_new.Size = tb.Size;
 
-            SQLWorkbook sq = new SQLWorkbook();
+            var sq = new SQLWorkbook();
             connectionManager.Register(sq);
             sq.Size = pg_new.Size;
 
@@ -335,10 +333,9 @@ namespace SQLite_Management_Studio
 
         private void toolStripButton2_Click(object sender, EventArgs e)
         {
-            TabPage pg = tb.SelectedTab;
+            var pg = tb.SelectedTab;
             if (pg.Name != "tb_Struct" && pg.Name != "tb_Add")
                 tb.TabPages.Remove(pg);
-
         }
 
         private void toolStripButton4_Click(object sender, EventArgs e)
@@ -353,25 +350,21 @@ namespace SQLite_Management_Studio
 
         private void toolStripButton6_Click(object sender, EventArgs e)
         {
-
-
         }
 
         private void splitContainer1_Panel1_Paint(object sender, PaintEventArgs e)
         {
-
         }
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure to Delete all records?", "Delete", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure to Delete all records?", "Delete", MessageBoxButtons.YesNo) ==
+                DialogResult.Yes)
             {
-                SQLWorker sq = new SQLWorker();
+                var sq = new SQLWorker();
 
                 sq.Execute_Query("delete from " + curr_node.Text,
                     Convert.ToInt32(curr_node.Tag));
-
-
             }
         }
 
@@ -383,26 +376,6 @@ namespace SQLite_Management_Studio
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
-
-        }
-
-        public void NotifyChange(ConnectionChangeType connectionChangeType)
-        {
-            switch (connectionChangeType)
-            {
-                case ConnectionChangeType.Add:
-                    break;
-                case ConnectionChangeType.Connected:
-                    break;
-                case ConnectionChangeType.Disconnected:
-                    break;
-                case ConnectionChangeType.Removed:
-                    Connections_Ref();
-                    break;
-                default:
-                    break;
-            }
-
         }
     }
 }

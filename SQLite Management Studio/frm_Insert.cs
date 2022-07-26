@@ -1,38 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
 using System.Data.SQLite;
+using System.Windows.Forms;
 
 namespace SQLite_Management_Studio
 {
     public partial class frm_Insert : Form
     {
-        string tbl_name = "";
-        int connId;
+        private SQLiteCommand com = null;
+        private readonly int connId;
+        private SQLiteDataAdapter da;
 
-        Label[] lbl;
-        TextBox[] txt;
+        private Label[] lbl;
 
-        DataTable tbl=null ;
-
-        SQLiteCommand com = null;
-        SQLiteDataAdapter da = null;
-        
+        private DataTable tbl;
+        private readonly string tbl_name = "";
+        private TextBox[] txt;
 
 
-        public frm_Insert(string tbl ,int conns  )
+        public frm_Insert(string tbl, int conns)
         {
             InitializeComponent();
 
             tbl_name = tbl;
             connId = conns;
-
-
         }
 
         private void frm_Insert_Load(object sender, EventArgs e)
@@ -43,24 +34,22 @@ namespace SQLite_Management_Studio
 
         private void Draw_Form()
         {
-
-
-            da = null;//new SQLiteDataAdapter("select * from " + tbl_name + " where 1=2", connId);
+            da = null; //new SQLiteDataAdapter("select * from " + tbl_name + " where 1=2", connId);
 
             tbl = new DataTable();
             da.Fill(tbl);
 
-            int tmp = tbl.Columns .Count;
+            var tmp = tbl.Columns.Count;
 
             lbl = new Label[tmp];
             txt = new TextBox[tmp];
 
-            for (int i = 0; i < tmp; i++)
+            for (var i = 0; i < tmp; i++)
             {
                 lbl[i] = new Label();
-                lbl[i].Text  = tbl.Columns[i].ColumnName;
+                lbl[i].Text = tbl.Columns[i].ColumnName;
                 lbl[i].Left = 10;
-                lbl[i].Top = 15 + (i * 30);
+                lbl[i].Top = 15 + i * 30;
                 lbl[i].Height = 30;
                 lbl[i].Width = 100;
 
@@ -69,33 +58,26 @@ namespace SQLite_Management_Studio
                 txt[i].Width = 200;
                 txt[i].Left = 130;
                 txt[i].Height = 30;
-                txt[i].Top = 15 + (i * 30);
+                txt[i].Top = 15 + i * 30;
 
                 pnl.Controls.Add(lbl[i]);
                 pnl.Controls.Add(txt[i]);
-
-                
-
- 
             }
-
-
-            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string com_str = "insert into " + tbl_name + " values (";
-            string tmp_str = "";
-            string cols="";
+            var com_str = "insert into " + tbl_name + " values (";
+            var tmp_str = "";
+            var cols = "";
 
-            int tmp = tbl.Columns .Count;
+            var tmp = tbl.Columns.Count;
 
-            SQLiteParameter[] prm=new SQLiteParameter[tmp];
+            var prm = new SQLiteParameter[tmp];
 
-            for (int i = 0; i < tmp; i++)
+            for (var i = 0; i < tmp; i++)
             {
-                prm[i] = new SQLiteParameter("@p" + (i + 1).ToString(), tbl.Columns[i].DataType);
+                prm[i] = new SQLiteParameter("@p" + (i + 1), tbl.Columns[i].DataType);
                 try
                 {
                     switch (tbl.Columns[i].DataType.ToString().ToUpper())
@@ -105,17 +87,15 @@ namespace SQLite_Management_Studio
                             break;
                         case "SYSTEM.DATETIME":
                         case "SYSTEM.DATE":
-                            prm[i].Value = DateTime.Parse (txt[i].Text ).ToString("s");
+                            prm[i].Value = DateTime.Parse(txt[i].Text).ToString("s");
                             break;
                         case "SYSTEM.DOUBLE":
                         case "SYSTEM.DECIMAL":
-                            prm[i].Value = double .Parse  (txt[i].Text);
+                            prm[i].Value = double.Parse(txt[i].Text);
                             break;
-                        default :
+                        default:
                             prm[i].Value = int.Parse(txt[i].Text);
                             break;
-
- 
                     }
                 }
                 catch (Exception ex)
@@ -125,10 +105,7 @@ namespace SQLite_Management_Studio
                 }
 
                 cols += lbl[i].Text + ",";
-                tmp_str += "@p" + (i + 1).ToString() + ",";
-
-
- 
+                tmp_str += "@p" + (i + 1) + ",";
             }
 
             cols = cols.Substring(0, cols.Length - 1);
@@ -138,23 +115,19 @@ namespace SQLite_Management_Studio
 
             //MessageBox.Show(com_str);
 
-            SQLWorker sq = new SQLWorker();
+            var sq = new SQLWorker();
 
             sq.Execute_Query(com_str, connId, prm);
 
-            if (sq.WorkerResult.Result == true)
+            if (sq.WorkerResult.Result)
                 MessageBox.Show("Record added");
             else
                 MessageBox.Show(sq.WorkerResult.Message);
-
-           
-
-
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

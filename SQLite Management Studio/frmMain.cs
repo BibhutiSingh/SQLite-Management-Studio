@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Windows.Forms;
+using SQLite_Management_Studio.Helpers;
 
 namespace SQLite_Management_Studio
 {
@@ -26,6 +27,7 @@ namespace SQLite_Management_Studio
             obj_sql = new SQLWorker();
             connectionManager = ConnectionManagerV2.GetConnectionManager();
             connectionManager.Register(this);
+            txt_query.ApplySqlHighlighting();
         }
 
         public void NotifyChange(ConnectionChangeType connectionChangeType)
@@ -54,10 +56,8 @@ namespace SQLite_Management_Studio
         {
             Connections_Ref();
             tv_connections.ImageList = imgList;
-            var sq = new SQLWorkbook();
-            sq.Size = tabPage1.Size;
-            tabPage1.Controls.Add(sq);
-            connectionManager.Register(sq);
+            tb.SelectedIndex = 1;
+            //QueryEditor_Add();
         }
 
         private void Connections_Ref()
@@ -278,27 +278,26 @@ namespace SQLite_Management_Studio
                 RefreshConnectionTree();
             }
         }
-
+        private void QueryEditor_Add()
+        {
+            var pg_new = new TabPage();
+            pg_new.Text = "Editor " + (tb.TabCount - 1);
+            pg_new.Size = tb.Size;
+            var sq = new SQLWorkbook();
+            sq.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            connectionManager.Register(sq);
+            sq.Size = pg_new.Size;
+            pg_new.Controls.Add(sq);
+            tb.TabPages.Insert(tb.TabCount - 1, pg_new);
+            tb.SelectedIndex = tb.SelectedIndex - 1;
+        }
         private void tb_SelectedIndexChanged(object sender, EventArgs e)
         {
             var pg = tb.SelectedTab;
 
-            if (pg.Name != "tb_Add")
+            if (pg is TabPage && pg.Name != "tb_Add")
                 return;
-
-            var pg_new = new TabPage();
-
-            pg_new.Text = "Editor " + (tb.TabCount - 1);
-            pg_new.Size = tb.Size;
-
-            var sq = new SQLWorkbook();
-            connectionManager.Register(sq);
-            sq.Size = pg_new.Size;
-
-            pg_new.Controls.Add(sq);
-
-            tb.TabPages.Insert(tb.SelectedIndex, pg_new);
-            tb.SelectedIndex = tb.SelectedIndex - 1;
+            QueryEditor_Add();
         }
 
         private void toolStripButton3_Click(object sender, EventArgs e)
@@ -376,6 +375,15 @@ namespace SQLite_Management_Studio
 
         private void menuStrip1_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
+        }
+
+        private void splitContainer1_SizeChanged(object sender, EventArgs e)
+        {
+            //MessageBox.Show(sender.ToString(), e.ToString());
+        }
+        private void splitContainer1_SplitterMoved(object sender, EventArgs e)
+        {
+            //MessageBox.Show(sender.ToString(), e.ToString());
         }
     }
 }

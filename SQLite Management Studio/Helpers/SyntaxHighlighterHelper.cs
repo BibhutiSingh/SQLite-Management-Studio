@@ -55,8 +55,8 @@ namespace SQLite_Management_Studio.Helpers
             txt.Styles[Style.Sql.CommentDocKeywordError].ForeColor = IntToColor(0xFF0000);
             txt.LexerName = "sql";
 
-            txt.SetKeywords(0, "select from where group by having delete update insert values into create table");
-            txt.SetKeywords(1, "* desc set rownum top min max avg count asc not null primary key autoincrement");
+            txt.SetKeywords(0, "abort action add after all alter always analyze and as asc attach autoincrement before begin between by cascade case cast check collate column commit conflict constraint create cross current current_date current_time current_timestamp database default deferrable deferred delete desc detach distinct do drop each else end escape except exclude exclusive exists explain fail filter first following for foreign from full generated glob group groups having if ignore immediate in index indexed initially inner insert instead intersect into is isnull join key last left like limit match materialized natural no not nothing notnull null nulls of offset on or order others outer over partition plan pragma preceding primary query raise range recursive references regexp reindex release rename replace restrict returning right rollback row rows savepoint select set table temp temporary then ties to transaction trigger unbounded union unique update using vacuum values view virtual when where window with without");
+            txt.SetKeywords(1, "* set rownum top min max avg count sum total group_concat string_agg int integer tinyint smallint mediumint bigint unsigned big int int2 int8 character varchar varying character nchar native character nvarchar text clob blob real double double precision float numeric decimal boolean date datetime");
 
 
         }

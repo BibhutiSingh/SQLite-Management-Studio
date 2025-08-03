@@ -52,6 +52,7 @@
             toolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             refreshToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             splitContainer1 = new System.Windows.Forms.SplitContainer();
+            label3 = new System.Windows.Forms.Label();
             tv_connections = new System.Windows.Forms.TreeView();
             tb = new System.Windows.Forms.TabControl();
             tb_Struct = new System.Windows.Forms.TabPage();
@@ -65,7 +66,6 @@
             txt_query = new ScintillaNET.Scintilla();
             tb_Add = new System.Windows.Forms.TabPage();
             imgList = new System.Windows.Forms.ImageList(components);
-            label3 = new System.Windows.Forms.Label();
             statusStrip1.SuspendLayout();
             menuStrip1.SuspendLayout();
             menu_connect.SuspendLayout();
@@ -256,6 +256,16 @@
             splitContainer1.TabIndex = 2;
             splitContainer1.Resize += splitContainer1_SizeChanged;
             // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new System.Drawing.Point(4, 6);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new System.Drawing.Size(91, 15);
+            label3.TabIndex = 5;
+            label3.Text = "All Connections";
+            // 
             // tv_connections
             // 
             tv_connections.Anchor = System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right;
@@ -274,26 +284,30 @@
             tb.Controls.Add(tb_Struct);
             tb.Controls.Add(tb_Add);
             tb.Dock = System.Windows.Forms.DockStyle.Fill;
+            tb.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             tb.Location = new System.Drawing.Point(0, 0);
             tb.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tb.Name = "tb";
+            tb.Padding = new System.Drawing.Point(20, 4);
             tb.SelectedIndex = 0;
             tb.Size = new System.Drawing.Size(996, 731);
             tb.TabIndex = 1;
+            tb.DrawItem += tb_DrawItem;
             tb.SelectedIndexChanged += tb_SelectedIndexChanged;
+            tb.MouseDown += tb_MouseDown;
             // 
             // tb_Struct
             // 
+            tb_Struct.BackColor = System.Drawing.SystemColors.Control;
             tb_Struct.Controls.Add(tabControl1);
             tb_Struct.Controls.Add(label1);
             tb_Struct.Controls.Add(txt_query);
-            tb_Struct.Location = new System.Drawing.Point(4, 24);
+            tb_Struct.Location = new System.Drawing.Point(4, 26);
             tb_Struct.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tb_Struct.Name = "tb_Struct";
-            tb_Struct.Size = new System.Drawing.Size(988, 703);
+            tb_Struct.Size = new System.Drawing.Size(988, 701);
             tb_Struct.TabIndex = 1;
-            tb_Struct.Text = "Structure & Data";
-            tb_Struct.UseVisualStyleBackColor = true;
+            tb_Struct.Text = "Structure && Data";
             // 
             // tabControl1
             // 
@@ -304,20 +318,20 @@
             tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new System.Drawing.Size(954, 457);
+            tabControl1.Size = new System.Drawing.Size(954, 455);
             tabControl1.TabIndex = 4;
             // 
             // tabPage2
             // 
+            tabPage2.BackColor = System.Drawing.SystemColors.Control;
             tabPage2.Controls.Add(dg_struct);
             tabPage2.Location = new System.Drawing.Point(4, 24);
             tabPage2.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPage2.Name = "tabPage2";
             tabPage2.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabPage2.Size = new System.Drawing.Size(946, 429);
+            tabPage2.Size = new System.Drawing.Size(946, 427);
             tabPage2.TabIndex = 0;
             tabPage2.Text = "Structure";
-            tabPage2.UseVisualStyleBackColor = true;
             // 
             // dg_struct
             // 
@@ -330,21 +344,21 @@
             dg_struct.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             dg_struct.Name = "dg_struct";
             dg_struct.ReadOnly = true;
-            dg_struct.Size = new System.Drawing.Size(920, 388);
+            dg_struct.Size = new System.Drawing.Size(920, 386);
             dg_struct.TabIndex = 6;
             // 
             // tabPage3
             // 
+            tabPage3.BackColor = System.Drawing.SystemColors.Control;
             tabPage3.Controls.Add(dg_data);
             tabPage3.Controls.Add(label2);
             tabPage3.Location = new System.Drawing.Point(4, 24);
             tabPage3.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPage3.Name = "tabPage3";
             tabPage3.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabPage3.Size = new System.Drawing.Size(946, 429);
+            tabPage3.Size = new System.Drawing.Size(946, 427);
             tabPage3.TabIndex = 1;
             tabPage3.Text = "Data";
-            tabPage3.UseVisualStyleBackColor = true;
             // 
             // dg_data
             // 
@@ -356,7 +370,7 @@
             dg_data.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             dg_data.Name = "dg_data";
             dg_data.ReadOnly = true;
-            dg_data.Size = new System.Drawing.Size(901, 374);
+            dg_data.Size = new System.Drawing.Size(901, 372);
             dg_data.TabIndex = 5;
             // 
             // label2
@@ -393,34 +407,25 @@
             // 
             // tb_Add
             // 
+            tb_Add.BackColor = System.Drawing.SystemColors.Control;
             tb_Add.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, 0);
-            tb_Add.Location = new System.Drawing.Point(4, 24);
+            tb_Add.Location = new System.Drawing.Point(4, 26);
             tb_Add.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tb_Add.Name = "tb_Add";
-            tb_Add.Size = new System.Drawing.Size(988, 703);
+            tb_Add.Size = new System.Drawing.Size(988, 701);
             tb_Add.TabIndex = 2;
             tb_Add.Text = "   +";
-            tb_Add.UseVisualStyleBackColor = true;
             // 
             // imgList
             // 
             imgList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
             imgList.ImageStream = (System.Windows.Forms.ImageListStreamer)resources.GetObject("imgList.ImageStream");
             imgList.TransparentColor = System.Drawing.Color.Transparent;
-            imgList.Images.SetKeyName(0, "Database.png");
-            imgList.Images.SetKeyName(1, "table.png");
-            imgList.Images.SetKeyName(2, "View.png");
-            imgList.Images.SetKeyName(3, "column.png");
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(4, 6);
-            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(91, 15);
-            label3.TabIndex = 5;
-            label3.Text = "All Connections";
+            imgList.Images.SetKeyName(0, "db_database.png");
+            imgList.Images.SetKeyName(1, "db_table.png");
+            imgList.Images.SetKeyName(2, "db_view.png");
+            imgList.Images.SetKeyName(3, "db_column.png");
+            imgList.Images.SetKeyName(4, "db_manage.png");
             // 
             // frmMain
             // 
@@ -480,7 +485,6 @@
         private System.Windows.Forms.ToolStripMenuItem addToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tablesToolStripMenuItem;
         private System.Windows.Forms.ContextMenuStrip menu_table;
-        private SQLWorkbook sqlWorkbook1;
         private System.Windows.Forms.ToolStripMenuItem refreshToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel txt_status;
         private System.Windows.Forms.ContextMenuStrip menu_connection;

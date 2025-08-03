@@ -157,11 +157,12 @@
             tabControl1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabControl1.Name = "tabControl1";
             tabControl1.SelectedIndex = 0;
-            tabControl1.Size = new System.Drawing.Size(944, 366);
+            tabControl1.Size = new System.Drawing.Size(944, 365);
             tabControl1.TabIndex = 1;
             // 
             // tabPage1
             // 
+            tabPage1.BackColor = System.Drawing.SystemColors.Control;
             tabPage1.Controls.Add(pnl_Export);
             tabPage1.Controls.Add(btn_Export);
             tabPage1.Controls.Add(dg);
@@ -169,10 +170,9 @@
             tabPage1.Margin = new System.Windows.Forms.Padding(4, 3, 4, 3);
             tabPage1.Name = "tabPage1";
             tabPage1.Padding = new System.Windows.Forms.Padding(4, 3, 4, 3);
-            tabPage1.Size = new System.Drawing.Size(936, 338);
+            tabPage1.Size = new System.Drawing.Size(936, 337);
             tabPage1.TabIndex = 0;
             tabPage1.Text = "Result Grid";
-            tabPage1.UseVisualStyleBackColor = true;
             // 
             // pnl_Export
             // 
@@ -295,6 +295,7 @@
             // 
             // tabPage2
             // 
+            tabPage2.BackColor = System.Drawing.SystemColors.Control;
             tabPage2.Controls.Add(button1);
             tabPage2.Controls.Add(dgres);
             tabPage2.Location = new System.Drawing.Point(4, 24);
@@ -304,7 +305,6 @@
             tabPage2.Size = new System.Drawing.Size(936, 337);
             tabPage2.TabIndex = 1;
             tabPage2.Text = "Result Panel";
-            tabPage2.UseVisualStyleBackColor = true;
             // 
             // button1
             // 

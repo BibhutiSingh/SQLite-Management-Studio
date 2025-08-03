@@ -1,9 +1,10 @@
-﻿using System;
+﻿using SQLite_Management_Studio.Helpers;
+using System;
 using System.ComponentModel;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using SQLite_Management_Studio.Helpers;
 
 namespace SQLite_Management_Studio
 {
@@ -67,7 +68,7 @@ namespace SQLite_Management_Studio
             conns.Name = "CONN";
             conns.Text = "Connections";
             conns.Tag = "CONN";
-            conns.ImageIndex = conns.SelectedImageIndex = 0;
+            conns.ImageIndex = conns.SelectedImageIndex = 4;
 
             tv_connections.Nodes.Add(conns);
 
@@ -78,7 +79,7 @@ namespace SQLite_Management_Studio
                 main_nodes.Text = item.Name;
                 main_nodes.ToolTipText = item.Path;
                 main_nodes.Tag = item.ID;
-                conns.ImageIndex = conns.SelectedImageIndex = 0;
+                main_nodes.ImageIndex = main_nodes.SelectedImageIndex = 0;
                 tv_connections.Nodes["CONN"].Nodes.Add(main_nodes);
                 if (item.IsConnectionActive) tv_connections.Nodes["CONN"].LastNode.Expand();
             }
@@ -384,6 +385,78 @@ namespace SQLite_Management_Studio
         private void splitContainer1_SplitterMoved(object sender, EventArgs e)
         {
             //MessageBox.Show(sender.ToString(), e.ToString());
+        }
+
+        private void tb_DrawItem(object sender, DrawItemEventArgs e)
+        {
+            TabControl tabControl = sender as TabControl;
+            TabPage tabPage = tabControl.TabPages[e.Index];
+            Rectangle tabRect = tabControl.GetTabRect(e.Index);
+            
+            Graphics g = e.Graphics;
+
+            // Draw tab background
+            if (e.Index == tb.SelectedIndex)
+            {
+                g.FillRectangle(new SolidBrush(Color.White), tabRect);
+            }
+            else
+            {
+                g.FillRectangle(SystemBrushes.Control, tabRect);
+            }
+                
+
+            // Draw tab text
+            TextRenderer.DrawText(g, tabPage.Text, tabControl.Font,
+                tabRect, Color.Black, TextFormatFlags.Left | TextFormatFlags.VerticalCenter);
+            if (e.Index == tb.TabPages.Count - 1 || e.Index == 0)
+            {
+                return;
+            }
+
+            // Draw close (X) button image
+            int imageSize = 16;
+            int padding = 6;
+            Rectangle imageRect = new Rectangle(
+                tabRect.Right - imageSize - padding,
+                tabRect.Top + (tabRect.Height - imageSize) / 2,
+                imageSize, imageSize);
+
+            // Replace with your actual image
+            g.DrawImage(Properties.Resources.btn_close, imageRect);
+            //e.Graphics.DrawImage(Properties.Resources.Refresh, e.Bounds.Right - 20, e.Bounds.Top + 4);
+        }
+        private void tb_MouseDown(object sender, MouseEventArgs e)
+        {
+            for (int i = 1; i < tb.TabPages.Count - 1; i++)
+            {
+                Rectangle tabRect = tb.GetTabRect(i);
+                int imageSize = 16;
+                int padding = 6;
+
+                Rectangle imageRect = new Rectangle(
+                    tabRect.Right - imageSize - padding,
+                    tabRect.Top + (tabRect.Height - imageSize) / 2,
+                    imageSize, imageSize);
+
+                if (imageRect.Contains(e.Location))
+                {
+                    // Optional confirmation
+                    //DialogResult result = MessageBox.Show(
+                    //    $"Close tab '{tabControl1.TabPages[i].Text}'?",
+                    //    "Confirm Close",
+                    //    MessageBoxButtons.YesNo,
+                    //    MessageBoxIcon.Question);
+
+                    //if (result == DialogResult.Yes)
+                    //{
+                    //    tabControl1.TabPages.RemoveAt(i);
+                    //}
+                    tb.TabPages.RemoveAt(i);
+
+                    break;
+                }
+            }
         }
     }
 }

@@ -7,3 +7,4 @@
 /SQLite Management Studio/bin
 /SQLite Management Studio/obj
 /SQLite Management Studio/.vs
+*.csproj.user

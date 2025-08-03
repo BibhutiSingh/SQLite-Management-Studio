@@ -1,42 +1,12 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <TargetFramework>net8.0-windows</TargetFramework>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{EB6DE4A4-B4F9-4510-B746-49B0E340648B}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SQLite_Management_Studio</RootNamespace>
-    <AssemblyName>SQLite Management Studio</AssemblyName>
-    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
-    <NuGetPackageImportStamp>
-    </NuGetPackageImportStamp>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>SQLite_Management_Studio.Program</StartupObject>
@@ -45,154 +15,17 @@
     <ApplicationIcon>dbs_sqlite.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Scintilla.NET, Version=6.0.1.0, Culture=neutral, PublicKeyToken=0221e70ba618311e, processorArchitecture=MSIL">
-      <HintPath>..\packages\Scintilla5.NET.6.0.1\lib\net462\Scintilla.NET.dll</HintPath>
-    </Reference>
-    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.SQLite, Version=1.0.119.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=MSIL">
-      <HintPath>..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\lib\net46\System.Data.SQLite.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Design" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="ConnectionManagerV2.cs" />
-    <Compile Include="frmMain.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frmNewTable.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frmNewTable.Designer.cs">
-      <DependentUpon>frmNewTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frm_AddConnection.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frm_AddConnection.Designer.cs">
-      <DependentUpon>frm_AddConnection.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frm_Export.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frm_Export.Designer.cs">
-      <DependentUpon>frm_Export.cs</DependentUpon>
-    </Compile>
-    <Compile Include="frm_Insert.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="frm_Insert.Designer.cs">
-      <DependentUpon>frm_Insert.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Helpers\SyntaxHighlighterHelper.cs" />
-    <Compile Include="Program.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SavedConnections.cs" />
-    <Compile Include="SQLWorkbook.cs">
+    <Compile Update="SQLWorkbook.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SQLWorkbook.Designer.cs">
-      <DependentUpon>SQLWorkbook.cs</DependentUpon>
-    </Compile>
-    <Compile Include="SQLWorker.cs" />
-    <Compile Include="test.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="test.Designer.cs">
-      <DependentUpon>test.cs</DependentUpon>
-    </Compile>
-    <EmbeddedResource Include="frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frmNewTable.resx">
-      <DependentUpon>frmNewTable.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frm_AddConnection.resx">
-      <DependentUpon>frm_AddConnection.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frm_Export.resx">
-      <DependentUpon>frm_Export.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="frm_Insert.resx">
-      <DependentUpon>frm_Insert.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <EmbeddedResource Include="SQLWorkbook.resx">
-      <DependentUpon>SQLWorkbook.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="test.resx">
-      <DependentUpon>test.cs</DependentUpon>
-    </EmbeddedResource>
-    <None Include="app.config" />
-    <None Include="packages.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\Add Data.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="dbs_sqlite.ico" />
-    <None Include="Resources\Database.png" />
-    <None Include="Resources\View.png" />
-    <None Include="Resources\table.png" />
-    <None Include="Resources\Plugout.png" />
-    <None Include="Resources\1608809-32.png" />
-    <None Include="Resources\1608796-32.png" />
-    <None Include="Resources\Connect.png" />
-    <None Include="Resources\Data_Refresh.png" />
-    <None Include="Resources\Data_Connect.png" />
-    <None Include="Resources\Data_Close.png" />
-    <None Include="Resources\tab.png" />
-    <None Include="Resources\tab_remove.png" />
-    <None Include="Resources\tab_new.png" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\packages\Scintilla5.NET.6.0.1\build\scintilla5.net.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Scintilla5.NET.6.0.1\build\scintilla5.net.targets'))" />
-    <Error Condition="!Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets'))" />
-  </Target>
-  <Import Project="..\packages\Scintilla5.NET.6.0.1\build\scintilla5.net.targets" Condition="Exists('..\packages\Scintilla5.NET.6.0.1\build\scintilla5.net.targets')" />
-  <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+    <PackageReference Include="Scintilla5.NET" Version="6.0.1" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.5.0" />
+    <PackageReference Include="System.Data.SQLite.Core" Version="1.0.119.0" />
+  </ItemGroup>
 </Project>
